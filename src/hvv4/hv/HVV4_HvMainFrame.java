@@ -48,7 +48,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 String strI1A = "", strI2A = "", strI3A = "", strI4A = "";
                 String strI1T = "", strI2T = "", strI3T = "", strI4T = "";
                 
-                if( theApp.m_mapU.containsKey( "1A")) { nVal = ( int) theApp.m_mapU.get( "1A"); strU1A = "" + nVal; }
+                if( theApp.m_mapU.containsKey( "1A")) { nVal = ( int) theApp.m_mapU.get( "1A"); strU1A = String.format( "%.0f", ( double) nVal / 32.); }
                 if( theApp.m_mapU.containsKey( "2A")) { nVal = ( int) theApp.m_mapU.get( "2A"); strU2A = "" + nVal; }
                 if( theApp.m_mapU.containsKey( "3A")) { nVal = ( int) theApp.m_mapU.get( "3A"); strU3A = "" + nVal; }
                 if( theApp.m_mapU.containsKey( "4A")) { nVal = ( int) theApp.m_mapU.get( "4A"); strU4A = "" + nVal; }
@@ -58,7 +58,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 if( theApp.m_mapU.containsKey( "3T")) { nVal = ( int) theApp.m_mapU.get( "3T"); strU3T = "" + nVal; }
                 if( theApp.m_mapU.containsKey( "4T")) { nVal = ( int) theApp.m_mapU.get( "4T"); strU4T = "" + nVal; }
                 
-                if( theApp.m_mapI.containsKey( "1A")) { nVal = ( int) theApp.m_mapI.get( "1A"); strI1A = "" + nVal; }
+                if( theApp.m_mapI.containsKey( "1A")) { nVal = ( int) theApp.m_mapI.get( "1A"); strI1A = String.format( "%.0f", ( double) nVal * 4096. / 65535. * 5.); }
                 if( theApp.m_mapI.containsKey( "2A")) { nVal = ( int) theApp.m_mapI.get( "2A"); strI2A = "" + nVal; }
                 if( theApp.m_mapI.containsKey( "3A")) { nVal = ( int) theApp.m_mapI.get( "3A"); strI3A = "" + nVal; }
                 if( theApp.m_mapI.containsKey( "4A")) { nVal = ( int) theApp.m_mapI.get( "4A"); strI4A = "" + nVal; }
@@ -216,15 +216,15 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(sldSetCurrent);
-        sldSetCurrent.setBounds(10, 50, 560, 16);
+        sldSetCurrent.setBounds(10, 40, 560, 40);
 
         btnSetCurrentApply.setText("Подать / обновить");
         getContentPane().add(btnSetCurrentApply);
-        btnSetCurrentApply.setBounds(10, 70, 310, 40);
+        btnSetCurrentApply.setBounds(10, 90, 310, 40);
 
         btnSetCurrentOff.setText("Снять");
         getContentPane().add(btnSetCurrentOff);
-        btnSetCurrentOff.setBounds(420, 70, 150, 40);
+        btnSetCurrentOff.setBounds(420, 90, 150, 40);
 
         btnGroup1A.add(rad1AOn);
         rad1AOn.setText("Вкл.");

@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
@@ -220,13 +219,13 @@ public class HVV4_HvApp {
         m_pMainWnd = new HVV4_HvMainFrame( this);
         
         OpenPort( "/dev/ttyUSB0", "1A");
-        OpenPort( "COM2", "2A");
-        OpenPort( "COM3", "3A");
-        OpenPort( "COM4", "4A");
-        OpenPort( "COM5", "1T");
-        OpenPort( "COM6", "2T");
-        OpenPort( "COM7", "3T");
-        OpenPort( "COM8", "4T");
+        OpenPort( "/dev/ttyUSB1", "2A");
+        OpenPort( "/dev/ttyUSB2", "3A");
+        OpenPort( "/dev/ttyUSB3", "4A");
+        OpenPort( "/dev/ttyUSB4", "1T");
+        OpenPort( "/dev/ttyUSB5", "2T");
+        OpenPort( "/dev/ttyUSB6", "3T");
+        OpenPort( "/dev/ttyUSB7", "4T");
         
         java.awt.EventQueue.invokeLater( new Runnable() {
             public void run() {

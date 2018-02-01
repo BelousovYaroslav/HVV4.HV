@@ -89,8 +89,8 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
                                 int nB1 = bts[1] & 0xFF;
                                 int nB2 = bts[2] & 0xFF;
                                 int nB3 = bts[3] & 0xFF;
-                                int nUval = ( nB1 << 8) + nB0;
-                                int nIval = ( nB3 << 8) + nB2;
+                                int nUval = ( nB2 << 8) + nB3;
+                                int nIval = ( nB0 << 8) + nB1;
                                 theApp.m_mapU.put( m_strIdentifier, nUval);
                                 theApp.m_mapI.put( m_strIdentifier, nIval);
                             }
