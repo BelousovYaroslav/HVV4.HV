@@ -6,11 +6,13 @@
 package hvv4.hv;
 
 import hvv4.hv.comm.HVV4_HV_StreamProcessingThread;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.Timer;
 import jssc.SerialPort;
 import jssc.SerialPortException;
@@ -27,8 +29,12 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     private HVV4_HvApp theApp;
 
     Timer tRefreshValues;
-    Timer tPolling;    
+    Timer tPolling;
+    Timer tCommandSend;
+    Timer tApplyPreset;
     
+    int m_nEmergencyOffClicks;
+    Timer tEmergencyOffClicksDrop;
     /**
      * Creates new form HVV4HVMainFrame
      */
@@ -36,8 +42,112 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         initComponents();
         theApp = app;
         
-        setTitle( "HVV4.Модуль управления  в\\в. (2018.02.01 10:30), (C) ФЛАВТ 2018.");
+        m_nEmergencyOffClicks = 0;
+        tEmergencyOffClicksDrop = new Timer( 500, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                m_nEmergencyOffClicks = 0;
+                tEmergencyOffClicksDrop.stop();
+                lblEmergencyOff.setBackground( null);
+            }
+        });
+                
+        setTitle( "HVV4.Модуль управления  в\\в. (2018.02.02 13:00), (C) ФЛАВТ 2018.");
         
+        //таймер, отправляющий команды выставки уставки в контроллеры в/в модулей
+        tApplyPreset = new Timer( 300, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tApplyPreset.stop();
+                int value = sldPreset.getValue();
+                int code = value;
+                Set set = theApp.m_mapSerials.entrySet();
+                Iterator it = set.iterator();
+                while( it.hasNext()) {
+                    Map.Entry entry = (Map.Entry) it.next();
+                    
+                    String strId = ( String) entry.getKey();
+                    SerialPort port = ( SerialPort) entry.getValue();
+                    
+                    ConcurrentLinkedQueue q = ( ConcurrentLinkedQueue) theApp.m_mapCommands.get( strId);
+                    boolean bApply = false;
+                    switch( strId) {
+                        case "1A": if( rad1AOn.isSelected()) bApply = true; break;
+                        case "1T": if( rad1TOn.isSelected()) bApply = true; break;
+                        case "2A": if( rad2AOn.isSelected()) bApply = true; break;
+                        case "2T": if( rad2TOn.isSelected()) bApply = true; break;
+                        case "3A": if( rad3AOn.isSelected()) bApply = true; break;
+                        case "3T": if( rad3TOn.isSelected()) bApply = true; break;
+                        case "4A": if( rad4AOn.isSelected()) bApply = true; break;
+                        case "4T": if( rad4TOn.isSelected()) bApply = true; break;
+                    }
+                    
+                    if( bApply) {
+                        byte aBytes[] = new byte[3];
+                        aBytes[0] = 0x01;
+                        aBytes[1] = ( byte) ( code & 0xFF);
+                        aBytes[2] = ( byte) ( ( code & 0xFF00) >> 8);
+                        q.add( aBytes);
+                        logger.info( String.format( strId + ": SET PRESET (0x%02X 0x%02X 0x%02X): queued", aBytes[0], aBytes[1], aBytes[2]));
+                        
+                        byte bBytes[] = new byte[1];
+                        bBytes[0] = 0x02;
+                        q.add( bBytes);
+                        logger.info( String.format( strId + ": APPLY (0x%02X): queued", bBytes[0]));
+                    }
+                }
+            }
+            
+        });
+        //СТАРТОВАТЬ НЕ НАДО!
+                
+        //таймер, отправляющий команды в контроллеры в/в модулей
+        tCommandSend = new Timer( 100, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Set set = theApp.m_mapSerials.entrySet();
+                Iterator it = set.iterator();
+                while( it.hasNext()) {
+                    Map.Entry entry = (Map.Entry) it.next();
+                    
+                    String strId = ( String) entry.getKey();
+                    SerialPort port = ( SerialPort) entry.getValue();
+                    
+                    HVV4_HV_StreamProcessingThread proc = ( HVV4_HV_StreamProcessingThread) theApp.m_mapProcessorsRunnables.get( strId);
+                    if( proc.GetWaitingForResponse() == false) {
+                        
+                        ConcurrentLinkedQueue q = ( ConcurrentLinkedQueue) theApp.m_mapCommands.get( strId);
+                        if( !q.isEmpty()) {
+                            byte aBytes[] = ( byte []) q.poll();
+
+                            String strCmd = "";
+                            for( int i=0; i<aBytes.length; i++)
+                                strCmd += String.format( " 0x%02X", aBytes[i]);
+                            
+                            try {
+                                port.writeBytes( aBytes);
+                                proc.WaitForRespond();
+                                logger.info( strId + ": SEND CMD: (" + strCmd + ") sent");
+                            } catch (SerialPortException ex) {
+                                logger.error( strId + ": SEND CMD: FAIL: COM-Communication exception", ex);
+                            }
+                        }
+                        else
+                            logger.debug( strId + ": SEND CMD: EMPTY");
+                    }
+                    else {
+                        logger.warn( strId + ": SEND CMD: REJECTED");
+                    }
+                }
+            }
+            
+        });
+        tCommandSend.start();
+
+        //таймер, обновляющий значения на экране
         tRefreshValues = new Timer( 500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -83,11 +193,12 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         });
         tRefreshValues.start();
         
+        //таймер, периодически (при пустой очереди команд по каналу, добавляющий команду опроса текущих значений)
         tPolling = new Timer( 200, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                logger.info( "POLLING");
+                logger.trace( "POLLING");
                 Set set = theApp.m_mapSerials.entrySet();
                 Iterator it = set.iterator();
                 while( it.hasNext()) {
@@ -96,20 +207,15 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                     String strId = ( String) entry.getKey();
                     SerialPort port = ( SerialPort) entry.getValue();
                     
-                    HVV4_HV_StreamProcessingThread proc = ( HVV4_HV_StreamProcessingThread) theApp.m_mapProcessorsRunnables.get( strId);
-                    if( proc.WaitForRespond()) {
-                    
-                        logger.info( "POLLING " + strId);
+                    ConcurrentLinkedQueue q = ( ConcurrentLinkedQueue) theApp.m_mapCommands.get( strId);
+                    if( q.isEmpty()) {
                         byte aBytes[] = new byte[1];
                         aBytes[0] = 0x05;
-                        try {
-                            port.writeBytes( aBytes);
-                        } catch (SerialPortException ex) {
-                            logger.error( "POLLING " + strId + " >> COM-Communication exception", ex);
-                        }
+                        q.add( aBytes);
+                        logger.info( strId + ": POLLING: queued");
                     }
                     else {
-                        logger.info( "POLLING " + strId + " rejected");
+                        logger.info( strId + ": POLLING: REJECTED");
                     }
         
                 }
@@ -137,10 +243,12 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         btnGroup3T = new javax.swing.ButtonGroup();
         btnGroup4T = new javax.swing.ButtonGroup();
         lblSetCurrentTitle = new javax.swing.JLabel();
-        spnSetCurrent = new javax.swing.JSpinner();
-        sldSetCurrent = new javax.swing.JSlider();
-        btnSetCurrentApply = new javax.swing.JButton();
-        btnSetCurrentOff = new javax.swing.JButton();
+        edtPreset = new javax.swing.JTextField();
+        btnPresetDown = new javax.swing.JButton();
+        btnPresetUp = new javax.swing.JButton();
+        sldPreset = new javax.swing.JSlider();
+        btnPresetApply = new javax.swing.JButton();
+        btnTurnOff = new javax.swing.JButton();
         rad1AOn = new javax.swing.JRadioButton();
         rad1AOff = new javax.swing.JRadioButton();
         rad1AStay = new javax.swing.JRadioButton();
@@ -194,6 +302,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         lblI3T = new javax.swing.JLabel();
         lblI4T = new javax.swing.JLabel();
         tglBtnLockScreen = new javax.swing.JToggleButton();
+        lblEmergencyOff = new javax.swing.JLabel();
         btnExit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -206,25 +315,73 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         getContentPane().add(lblSetCurrentTitle);
         lblSetCurrentTitle.setBounds(10, 10, 460, 40);
 
-        spnSetCurrent.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
-        getContentPane().add(spnSetCurrent);
-        spnSetCurrent.setBounds(480, 10, 90, 40);
-
-        sldSetCurrent.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
-            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
-                sldSetCurrentMouseWheelMoved(evt);
+        edtPreset.setFont(new java.awt.Font("Dialog", 0, 32)); // NOI18N
+        edtPreset.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        edtPreset.setText("1000");
+        edtPreset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                edtPresetActionPerformed(evt);
             }
         });
-        getContentPane().add(sldSetCurrent);
-        sldSetCurrent.setBounds(10, 40, 560, 40);
+        getContentPane().add(edtPreset);
+        edtPreset.setBounds(410, 10, 110, 40);
 
-        btnSetCurrentApply.setText("Подать / обновить");
-        getContentPane().add(btnSetCurrentApply);
-        btnSetCurrentApply.setBounds(10, 90, 310, 40);
+        btnPresetDown.setIcon(new javax.swing.ImageIcon("/home/yaroslav/HVV_HOME/res/images/down.gif")); // NOI18N
+        btnPresetDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPresetDownActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnPresetDown);
+        btnPresetDown.setBounds(520, 30, 40, 20);
 
-        btnSetCurrentOff.setText("Снять");
-        getContentPane().add(btnSetCurrentOff);
-        btnSetCurrentOff.setBounds(420, 90, 150, 40);
+        btnPresetUp.setIcon(new javax.swing.ImageIcon("/home/yaroslav/HVV_HOME/res/images/up.gif")); // NOI18N
+        btnPresetUp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPresetUpActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnPresetUp);
+        btnPresetUp.setBounds(520, 10, 40, 20);
+
+        sldPreset.setMaximum(3000);
+        sldPreset.setToolTipText("");
+        sldPreset.setValue(1000);
+        sldPreset.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                sldPresetMouseWheelMoved(evt);
+            }
+        });
+        sldPreset.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                sldPresetMouseReleased(evt);
+            }
+        });
+        sldPreset.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                sldPresetMouseDragged(evt);
+            }
+        });
+        getContentPane().add(sldPreset);
+        sldPreset.setBounds(10, 40, 560, 40);
+
+        btnPresetApply.setText("Подать / обновить");
+        btnPresetApply.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPresetApplyActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnPresetApply);
+        btnPresetApply.setBounds(10, 90, 310, 40);
+
+        btnTurnOff.setText("Снять");
+        btnTurnOff.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTurnOffActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnTurnOff);
+        btnTurnOff.setBounds(420, 90, 150, 40);
 
         btnGroup1A.add(rad1AOn);
         rad1AOn.setText("Вкл.");
@@ -234,6 +391,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         btnGroup1A.add(rad1AOff);
         rad1AOff.setSelected(true);
         rad1AOff.setText("Выкл.");
+        rad1AOff.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rad1AOffActionPerformed(evt);
+            }
+        });
         getContentPane().add(rad1AOff);
         rad1AOff.setBounds(60, 150, 70, 20);
 
@@ -256,6 +418,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         btnGroup2A.add(rad2AOff);
         rad2AOff.setSelected(true);
         rad2AOff.setText("Выкл.");
+        rad2AOff.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rad2AOffActionPerformed(evt);
+            }
+        });
         getContentPane().add(rad2AOff);
         rad2AOff.setBounds(190, 150, 70, 20);
 
@@ -278,6 +445,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         btnGroup3A.add(rad3AOff);
         rad3AOff.setSelected(true);
         rad3AOff.setText("Выкл.");
+        rad3AOff.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rad3AOffActionPerformed(evt);
+            }
+        });
         getContentPane().add(rad3AOff);
         rad3AOff.setBounds(320, 150, 70, 20);
 
@@ -300,6 +472,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         btnGroup4A.add(rad4AOff);
         rad4AOff.setSelected(true);
         rad4AOff.setText("Выкл.");
+        rad4AOff.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rad4AOffActionPerformed(evt);
+            }
+        });
         getContentPane().add(rad4AOff);
         rad4AOff.setBounds(450, 150, 70, 20);
 
@@ -386,6 +563,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         btnGroup1T.add(rad1TOff);
         rad1TOff.setSelected(true);
         rad1TOff.setText("Выкл.");
+        rad1TOff.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rad1TOffActionPerformed(evt);
+            }
+        });
         getContentPane().add(rad1TOff);
         rad1TOff.setBounds(60, 340, 70, 20);
 
@@ -408,6 +590,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         btnGroup2T.add(rad2TOff);
         rad2TOff.setSelected(true);
         rad2TOff.setText("Выкл.");
+        rad2TOff.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rad2TOffActionPerformed(evt);
+            }
+        });
         getContentPane().add(rad2TOff);
         rad2TOff.setBounds(190, 340, 70, 20);
 
@@ -430,6 +617,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         btnGroup3T.add(rad3TOff);
         rad3TOff.setSelected(true);
         rad3TOff.setText("Выкл.");
+        rad3TOff.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rad3TOffActionPerformed(evt);
+            }
+        });
         getContentPane().add(rad3TOff);
         rad3TOff.setBounds(320, 340, 70, 20);
 
@@ -452,6 +644,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         btnGroup4T.add(rad4TOff);
         rad4TOff.setSelected(true);
         rad4TOff.setText("Выкл.");
+        rad4TOff.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rad4TOffActionPerformed(evt);
+            }
+        });
         getContentPane().add(rad4TOff);
         rad4TOff.setBounds(450, 340, 70, 20);
 
@@ -537,7 +734,19 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(tglBtnLockScreen);
-        tglBtnLockScreen.setBounds(10, 490, 310, 40);
+        tglBtnLockScreen.setBounds(10, 490, 200, 40);
+
+        lblEmergencyOff.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblEmergencyOff.setText("<html>АВАРИЙНОЕ ВЫКЛЮЧЕНИЕ<br>ТРОЙНОЙ КЛИК СЮДА!</html>");
+        lblEmergencyOff.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        lblEmergencyOff.setOpaque(true);
+        lblEmergencyOff.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblEmergencyOffMouseClicked(evt);
+            }
+        });
+        getContentPane().add(lblEmergencyOff);
+        lblEmergencyOff.setBounds(220, 490, 200, 40);
 
         btnExit.setText("Выход");
         btnExit.addActionListener(new java.awt.event.ActionListener() {
@@ -546,7 +755,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnExit);
-        btnExit.setBounds(420, 490, 150, 40);
+        btnExit.setBounds(430, 490, 140, 40);
 
         pack();
         setLocationRelativeTo(null);
@@ -555,6 +764,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
         tRefreshValues.stop();
         tPolling.stop();
+        tCommandSend.stop();
         theApp.ClosePorts();
         this.dispose();
     }//GEN-LAST:event_btnExitActionPerformed
@@ -563,10 +773,12 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         if( tglBtnLockScreen.isSelected()) {
             tglBtnLockScreen.setText( "Разблокировать экран");
             
-            spnSetCurrent.setEnabled( false);
-            sldSetCurrent.setEnabled( false);
-            btnSetCurrentApply.setEnabled( false);
-            btnSetCurrentOff.setEnabled( false);
+            edtPreset.setEnabled( false);
+            btnPresetUp.setEnabled( false);
+            btnPresetDown.setEnabled( false);
+            sldPreset.setEnabled( false);
+            btnPresetApply.setEnabled( false);
+            btnTurnOff.setEnabled( false);
             
             rad1AOff.setEnabled( false);
             rad1AOn.setEnabled( false);
@@ -599,10 +811,12 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         else {
             tglBtnLockScreen.setText( "Заблокировать экран");
             
-            spnSetCurrent.setEnabled( true);
-            sldSetCurrent.setEnabled( true);
-            btnSetCurrentApply.setEnabled( true);
-            btnSetCurrentOff.setEnabled( true);
+            edtPreset.setEnabled( true);
+            btnPresetUp.setEnabled( true);
+            btnPresetDown.setEnabled( true);
+            sldPreset.setEnabled( true);
+            btnPresetApply.setEnabled( true);
+            btnTurnOff.setEnabled( true);
             
             rad1AOff.setEnabled( true);
             rad1AOn.setEnabled( true);
@@ -634,9 +848,208 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_tglBtnLockScreenActionPerformed
 
-    private void sldSetCurrentMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_sldSetCurrentMouseWheelMoved
-        // TODO add your handling code here:
-    }//GEN-LAST:event_sldSetCurrentMouseWheelMoved
+    private void sldPresetMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sldPresetMouseDragged
+        int value = sldPreset.getValue();
+        edtPreset.setText( "" + value);
+        tApplyPreset.restart();
+    }//GEN-LAST:event_sldPresetMouseDragged
+
+    private void sldPresetMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sldPresetMouseReleased
+        int value = sldPreset.getValue();
+        edtPreset.setText( "" + value);
+        tApplyPreset.restart();
+    }//GEN-LAST:event_sldPresetMouseReleased
+
+    private void sldPresetMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_sldPresetMouseWheelMoved
+        int value = sldPreset.getValue();
+        value -= evt.getWheelRotation() * 100;
+        if( value < 0) value = 0;
+        if( value > sldPreset.getMaximum()) value = sldPreset.getMaximum();
+        sldPreset.setValue( value);
+        edtPreset.setText( "" + value);
+        tApplyPreset.restart();
+    }//GEN-LAST:event_sldPresetMouseWheelMoved
+
+    private void btnPresetUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPresetUpActionPerformed
+        int value = sldPreset.getValue();
+        value += 10;
+        if( value < 0) value = 0;
+        if( value > sldPreset.getMaximum()) value = sldPreset.getMaximum();
+        sldPreset.setValue( value);
+        edtPreset.setText( "" + value);
+        tApplyPreset.restart();
+    }//GEN-LAST:event_btnPresetUpActionPerformed
+
+    private void btnPresetDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPresetDownActionPerformed
+        int value = sldPreset.getValue();
+        value -= 10;
+        if( value < 0) value = 0;
+        if( value > sldPreset.getMaximum()) value = sldPreset.getMaximum();
+        sldPreset.setValue( value);
+        edtPreset.setText( "" + value);
+        tApplyPreset.restart();
+    }//GEN-LAST:event_btnPresetDownActionPerformed
+
+    private void edtPresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edtPresetActionPerformed
+        String strEdt = edtPreset.getText();
+        int value;
+        try {
+            value = Integer.parseInt(strEdt);
+            if( value < 0) value = 0;
+            if( value > sldPreset.getMaximum()) value = sldPreset.getMaximum();
+            sldPreset.setValue( value);
+            edtPreset.setText( "" + value);
+            tApplyPreset.restart();
+        } catch (NumberFormatException nfe) {
+            logger.warn( nfe);
+            value = sldPreset.getValue();
+            edtPreset.setText( "" + value);
+        }
+    }//GEN-LAST:event_edtPresetActionPerformed
+
+    private void rad1AOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rad1AOffActionPerformed
+        ConcurrentLinkedQueue q = ( ConcurrentLinkedQueue) theApp.m_mapCommands.get( "1A");
+        if( q != null) {
+            byte aBytes[] = new byte[1];
+            aBytes[0] = 0x03;
+            q.add( aBytes);
+            logger.info( "1A: OFF: queued");
+        }
+    }//GEN-LAST:event_rad1AOffActionPerformed
+
+    private void rad1TOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rad1TOffActionPerformed
+        ConcurrentLinkedQueue q = ( ConcurrentLinkedQueue) theApp.m_mapCommands.get( "1T");
+        if( q != null) {
+            byte aBytes[] = new byte[1];
+            aBytes[0] = 0x03;
+            q.add( aBytes);
+            logger.info( "1T: OFF: queued");
+        }
+    }//GEN-LAST:event_rad1TOffActionPerformed
+
+    private void rad2AOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rad2AOffActionPerformed
+        ConcurrentLinkedQueue q = ( ConcurrentLinkedQueue) theApp.m_mapCommands.get( "2A");
+        if( q != null) {
+            byte aBytes[] = new byte[1];
+            aBytes[0] = 0x03;
+            q.add( aBytes);
+            logger.info( "2A: OFF: queued");
+        }
+    }//GEN-LAST:event_rad2AOffActionPerformed
+
+    private void rad2TOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rad2TOffActionPerformed
+        ConcurrentLinkedQueue q = ( ConcurrentLinkedQueue) theApp.m_mapCommands.get( "2T");
+        if( q != null) {
+            byte aBytes[] = new byte[1];
+            aBytes[0] = 0x03;
+            q.add( aBytes);
+            logger.info( "2T: OFF: queued");
+        }
+    }//GEN-LAST:event_rad2TOffActionPerformed
+
+    private void rad3AOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rad3AOffActionPerformed
+        ConcurrentLinkedQueue q = ( ConcurrentLinkedQueue) theApp.m_mapCommands.get( "3A");
+        if( q != null) {
+            byte aBytes[] = new byte[1];
+            aBytes[0] = 0x03;
+            q.add( aBytes);
+            logger.info( "3A: OFF: queued");
+        }
+    }//GEN-LAST:event_rad3AOffActionPerformed
+
+    private void rad3TOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rad3TOffActionPerformed
+        ConcurrentLinkedQueue q = ( ConcurrentLinkedQueue) theApp.m_mapCommands.get( "3T");
+        if( q != null) {
+            byte aBytes[] = new byte[1];
+            aBytes[0] = 0x03;
+            q.add( aBytes);
+            logger.info( "3T: OFF: queued");
+        }
+    }//GEN-LAST:event_rad3TOffActionPerformed
+
+    private void rad4AOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rad4AOffActionPerformed
+        ConcurrentLinkedQueue q = ( ConcurrentLinkedQueue) theApp.m_mapCommands.get( "4A");
+        if( q != null) {
+            byte aBytes[] = new byte[1];
+            aBytes[0] = 0x03;
+            q.add( aBytes);
+            logger.info( "4A: OFF: queued");
+        }
+    }//GEN-LAST:event_rad4AOffActionPerformed
+
+    private void rad4TOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rad4TOffActionPerformed
+        ConcurrentLinkedQueue q = ( ConcurrentLinkedQueue) theApp.m_mapCommands.get( "4T");
+        if( q != null) {
+            byte aBytes[] = new byte[1];
+            aBytes[0] = 0x03;
+            q.add( aBytes);
+            logger.info( "4T: OFF: queued");
+        }
+    }//GEN-LAST:event_rad4TOffActionPerformed
+
+    private void lblEmergencyOffMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEmergencyOffMouseClicked
+        m_nEmergencyOffClicks++;
+        if( m_nEmergencyOffClicks == 3) {
+            rad1AOff.setSelected( true); rad1TOff.setSelected( true);
+            rad2AOff.setSelected( true); rad2TOff.setSelected( true);
+            rad3AOff.setSelected( true); rad3TOff.setSelected( true);
+            rad4AOff.setSelected( true); rad4TOff.setSelected( true);
+            
+            m_nEmergencyOffClicks = 0;
+            tEmergencyOffClicksDrop.stop();
+        }
+        tEmergencyOffClicksDrop.restart();
+        
+        switch( m_nEmergencyOffClicks) {
+            case 1: lblEmergencyOff.setBackground( new Color( 150, 0, 0)); break;
+            case 2: lblEmergencyOff.setBackground( new Color( 250, 0, 0)); break;
+            default: lblEmergencyOff.setBackground( null); break;
+        }
+    }//GEN-LAST:event_lblEmergencyOffMouseClicked
+
+    private void btnPresetApplyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPresetApplyActionPerformed
+        Set set = theApp.m_mapSerials.entrySet();
+        Iterator it = set.iterator();
+        while( it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+
+            String strId = ( String) entry.getKey();
+            SerialPort port = ( SerialPort) entry.getValue();
+
+            ConcurrentLinkedQueue q = ( ConcurrentLinkedQueue) theApp.m_mapCommands.get( strId);
+            
+            boolean bApply = false;
+            switch( strId) {
+                case "1A": if( rad1AOn.isSelected()) bApply = true; break;
+                case "1T": if( rad1TOn.isSelected()) bApply = true; break;
+                case "2A": if( rad2AOn.isSelected()) bApply = true; break;
+                case "2T": if( rad2TOn.isSelected()) bApply = true; break;
+                case "3A": if( rad3AOn.isSelected()) bApply = true; break;
+                case "3T": if( rad3TOn.isSelected()) bApply = true; break;
+                case "4A": if( rad4AOn.isSelected()) bApply = true; break;
+                case "4T": if( rad4TOn.isSelected()) bApply = true; break;
+            }
+
+            if( bApply) {
+                byte aBytes[] = new byte[1];
+                aBytes[0] = 0x02;
+                q.add( aBytes);
+                logger.info( strId + ": ON/UDATE: queued");
+            }
+            
+        }
+    }//GEN-LAST:event_btnPresetApplyActionPerformed
+
+    private void btnTurnOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTurnOffActionPerformed
+        if( rad1AOn.isSelected()) rad1AOff.setSelected( true);
+        if( rad1TOn.isSelected()) rad1TOff.setSelected( true);
+        if( rad2AOn.isSelected()) rad2AOff.setSelected( true);
+        if( rad2TOn.isSelected()) rad2TOff.setSelected( true);
+        if( rad3AOn.isSelected()) rad3AOff.setSelected( true);
+        if( rad3TOn.isSelected()) rad3TOff.setSelected( true);
+        if( rad4AOn.isSelected()) rad4AOff.setSelected( true);
+        if( rad4TOn.isSelected()) rad4TOff.setSelected( true);
+    }//GEN-LAST:event_btnTurnOffActionPerformed
 
     /**
      * @param args the command line arguments
@@ -684,8 +1097,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     private javax.swing.ButtonGroup btnGroup3T;
     private javax.swing.ButtonGroup btnGroup4A;
     private javax.swing.ButtonGroup btnGroup4T;
-    private javax.swing.JButton btnSetCurrentApply;
-    private javax.swing.JButton btnSetCurrentOff;
+    private javax.swing.JButton btnPresetApply;
+    private javax.swing.JButton btnPresetDown;
+    private javax.swing.JButton btnPresetUp;
+    private javax.swing.JButton btnTurnOff;
+    private javax.swing.JTextField edtPreset;
     private javax.swing.JLabel lbl1ATitle;
     private javax.swing.JLabel lbl1TTitle;
     private javax.swing.JLabel lbl2ATitle;
@@ -696,6 +1112,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel lbl4TTitle;
     private javax.swing.JLabel lblCurrentATitle;
     private javax.swing.JLabel lblCurrentTTitle;
+    private javax.swing.JLabel lblEmergencyOff;
     private javax.swing.JLabel lblI1A;
     private javax.swing.JLabel lblI1T;
     private javax.swing.JLabel lblI2A;
@@ -739,8 +1156,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     private javax.swing.JRadioButton rad4TOff;
     private javax.swing.JRadioButton rad4TOn;
     private javax.swing.JRadioButton rad4TStay;
-    private javax.swing.JSlider sldSetCurrent;
-    private javax.swing.JSpinner spnSetCurrent;
+    private javax.swing.JSlider sldPreset;
     private javax.swing.JToggleButton tglBtnLockScreen;
     // End of variables declaration//GEN-END:variables
 }

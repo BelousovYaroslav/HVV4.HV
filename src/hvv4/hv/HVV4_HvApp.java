@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JOptionPane;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
@@ -53,6 +54,7 @@ public class HVV4_HvApp {
     public final TreeMap m_mapProcessorsRunnables;
     public final TreeMap m_mapProcessorsThreads;
     public /*final*/ TreeMap m_mapStates;
+    public final TreeMap m_mapCommands;
     
     public static final int STATE_DISCONNECTED = 0;
     public static final int STATE_REQUESTED = 1;
@@ -134,16 +136,23 @@ public class HVV4_HvApp {
             evListener = new PortReader( this, strIdentifier);
             serialPort.addEventListener( evListener, SerialPort.MASK_RXCHAR);
             
+            //создаём кольцевой буфер для этого канала связи
             cBuffer = new HVV4_HV_CircleBuffer();
+            
+            //создаем и запускаем поток обрабатывающий входящие данные из этого канала связи
             HVV4_HV_StreamProcessingThread processor = new HVV4_HV_StreamProcessingThread( this, strIdentifier);
             Thread thread = new Thread( processor);
             thread.start();
+            
+            //создаём объект очереди исходящих команд для этого канала связи
+            ConcurrentLinkedQueue q = new ConcurrentLinkedQueue();
                     
             m_mapSerials.put( strIdentifier, serialPort);
             m_mapSerialListeners.put( strIdentifier, evListener);
             m_mapCircleBuffers.put( strIdentifier, cBuffer);
             m_mapProcessorsRunnables.put( strIdentifier, processor);
             m_mapProcessorsThreads.put( strIdentifier, thread);
+            m_mapCommands.put( strIdentifier, q);
         }
         catch( SerialPortException ex) {
             logger.error( "При попытке соединения c " + strPort + " получили исключительную ситуацию:\n\n", ex);
@@ -172,6 +181,7 @@ public class HVV4_HvApp {
             m_mapI = null;
             m_mapProcessorsRunnables = null;
             m_mapProcessorsThreads = null;
+            m_mapCommands = null;
             return;
         }
         
@@ -185,6 +195,7 @@ public class HVV4_HvApp {
         m_mapI = new TreeMap();
         m_mapProcessorsRunnables = new TreeMap();
         m_mapProcessorsThreads = new TreeMap();
+        m_mapCommands = new TreeMap();
     }
     
     public void start() {
@@ -218,14 +229,14 @@ public class HVV4_HvApp {
         //MAINFRAME
         m_pMainWnd = new HVV4_HvMainFrame( this);
         
-        OpenPort( "/dev/ttyUSB0", "1A");
-        OpenPort( "/dev/ttyUSB1", "2A");
-        OpenPort( "/dev/ttyUSB2", "3A");
-        OpenPort( "/dev/ttyUSB3", "4A");
-        OpenPort( "/dev/ttyUSB4", "1T");
-        OpenPort( "/dev/ttyUSB5", "2T");
-        OpenPort( "/dev/ttyUSB6", "3T");
-        OpenPort( "/dev/ttyUSB7", "4T");
+        OpenPort( GetSettings().GetPort1A(), "1A");
+        OpenPort( GetSettings().GetPort2A(), "2A");
+        OpenPort( GetSettings().GetPort3A(), "3A");
+        OpenPort( GetSettings().GetPort4A(), "4A");
+        OpenPort( GetSettings().GetPort1T(), "1T");
+        OpenPort( GetSettings().GetPort2T(), "2T");
+        OpenPort( GetSettings().GetPort3T(), "3T");
+        OpenPort( GetSettings().GetPort4T(), "4T");
         
         java.awt.EventQueue.invokeLater( new Runnable() {
             public void run() {

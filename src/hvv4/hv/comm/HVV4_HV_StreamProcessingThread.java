@@ -8,7 +8,6 @@ package hvv4.hv.comm;
 import hvv4.hv.HVV4_HvApp;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.EventListener;
 import javax.swing.Timer;
 
 /**
@@ -45,6 +44,7 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
                 }
                 
             });
+            logger.info( m_strIdentifier + " TIMEOUT STARTED!");
             m_TimeOut.start();
             bResult = true;
         }

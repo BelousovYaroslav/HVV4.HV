@@ -33,12 +33,45 @@ public class HVV4_HvSettings {
     private int m_nSingleInstanceSocketServerPort;
     public int GetSingleInstanceSocketServerPort() { return m_nSingleInstanceSocketServerPort;}
     
+    private String m_strPort1A;
+    public String GetPort1A() { return m_strPort1A; }
+    
+    private String m_strPort1T;
+    public String GetPort1T() { return m_strPort1T; }
+    
+    private String m_strPort2A;
+    public String GetPort2A() { return m_strPort2A; }
+    
+    private String m_strPort2T;
+    public String GetPort2T() { return m_strPort2T; }
+    
+    private String m_strPort3A;
+    public String GetPort3A() { return m_strPort3A; }
+    
+    private String m_strPort3T;
+    public String GetPort3T() { return m_strPort3T; }
+    
+    private String m_strPort4A;
+    public String GetPort4A() { return m_strPort4A; }
+    
+    private String m_strPort4T;
+    public String GetPort4T() { return m_strPort4T; }
+    
     //RW SECTION
     
     
     public HVV4_HvSettings( String strAMSRoot) {
         m_nTimeZoneShift = 0;
         m_nSingleInstanceSocketServerPort = 10006;
+        
+        m_strPort1A = "/dev/ttyUSB0";
+        m_strPort1T = "/dev/ttyUSB1";
+        m_strPort2A = "/dev/ttyUSB2";
+        m_strPort2T = "/dev/ttyUSB3";
+        m_strPort3A = "/dev/ttyUSB4";
+        m_strPort3T = "/dev/ttyUSB5";
+        m_strPort4A = "/dev/ttyUSB6";
+        m_strPort4T = "/dev/ttyUSB7";
         
         ReadSettings();
     }
@@ -77,6 +110,40 @@ public class HVV4_HvSettings {
             bResOk = false;
         }
         
+        //Коммуникационные порты 
+        try {
+            SAXReader reader = new SAXReader();
+            
+            String strSettingsFilePathName = System.getenv( "AMS_ROOT") + "/etc/hvv4.hv.modules.xml";
+            URL url = ( new java.io.File( strSettingsFilePathName)).toURI().toURL();
+            Document document = reader.read( url);
+            Element root = document.getRootElement();
+
+            // iterate through child elements of root
+            for ( Iterator i = root.elementIterator(); i.hasNext(); ) {
+                Element element = ( Element) i.next();
+                String name = element.getName();
+                String value = element.getText();
+                
+                //logger.debug( "Pairs: [" + name + " : " + value + "]");
+                
+                if( "Port1A".equals( name)) m_strPort1A = value;
+                if( "Port1T".equals( name)) m_strPort1T = value;
+                if( "Port2A".equals( name)) m_strPort2A = value;
+                if( "Port2T".equals( name)) m_strPort2T = value;
+                if( "Port3A".equals( name)) m_strPort3A = value;
+                if( "Port3T".equals( name)) m_strPort3T = value;
+                if( "Port4A".equals( name)) m_strPort4A = value;
+                if( "Port4T".equals( name)) m_strPort4T = value;                
+            }
+            
+        } catch( MalformedURLException ex) {
+            logger.error( "MalformedURLException caught while loading settings!", ex);
+            bResOk = false;
+        } catch( DocumentException ex) {
+            logger.error( "DocumentException caught while loading settings!", ex);
+            bResOk = false;
+        }
         
         if( bResOk) {
             try {
@@ -111,6 +178,8 @@ public class HVV4_HvSettings {
                 bResOk = false;
             }
         }
+        
+        
         return bResOk;
     }
     
