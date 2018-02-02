@@ -125,7 +125,7 @@ public class HVV4_HvApp {
             //Выставляем параметры
             serialPort.setParams( 38400,
                                  SerialPort.DATABITS_8,
-                                 SerialPort.STOPBITS_1,
+                                 0,//SerialPort.STOPBITS_1,
                                  SerialPort.PARITY_NONE);
 
             //Включаем аппаратное управление потоком

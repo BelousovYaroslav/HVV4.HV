@@ -50,6 +50,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 m_nEmergencyOffClicks = 0;
                 tEmergencyOffClicksDrop.stop();
                 lblEmergencyOff.setBackground( null);
+                logger.fatal( "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             }
         });
                 
@@ -989,20 +990,32 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
 
     private void lblEmergencyOffMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEmergencyOffMouseClicked
         m_nEmergencyOffClicks++;
+        tEmergencyOffClicksDrop.restart();
         if( m_nEmergencyOffClicks == 3) {
             rad1AOff.setSelected( true); rad1TOff.setSelected( true);
             rad2AOff.setSelected( true); rad2TOff.setSelected( true);
             rad3AOff.setSelected( true); rad3TOff.setSelected( true);
             rad4AOff.setSelected( true); rad4TOff.setSelected( true);
-            
-            m_nEmergencyOffClicks = 0;
             tEmergencyOffClicksDrop.stop();
         }
-        tEmergencyOffClicksDrop.restart();
-        
+
         switch( m_nEmergencyOffClicks) {
             case 1: lblEmergencyOff.setBackground( new Color( 150, 0, 0)); break;
             case 2: lblEmergencyOff.setBackground( new Color( 250, 0, 0)); break;
+            case 3:
+                lblEmergencyOff.setBackground( new Color( 0, 250, 0));
+                new Timer( 5000, new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Timer t = ( Timer) e.getSource();
+                        t.stop();
+                        lblEmergencyOff.setBackground( null);
+                        logger.fatal( "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
+                    }
+                }).start();
+                m_nEmergencyOffClicks = 0;
+                break;
             default: lblEmergencyOff.setBackground( null); break;
         }
     }//GEN-LAST:event_lblEmergencyOffMouseClicked
