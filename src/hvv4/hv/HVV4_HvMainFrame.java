@@ -50,7 +50,6 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 m_nEmergencyOffClicks = 0;
                 tEmergencyOffClicksDrop.stop();
                 lblEmergencyOff.setBackground( null);
-                logger.fatal( "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             }
         });
                 
@@ -90,6 +89,8 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                         aBytes[0] = 0x01;
                         aBytes[1] = ( byte) ( code & 0xFF);
                         aBytes[2] = ( byte) ( ( code & 0xFF00) >> 8);
+                        
+                        
                         q.add( aBytes);
                         logger.info( String.format( strId + ": SET PRESET (0x%02X 0x%02X 0x%02X): queued", aBytes[0], aBytes[1], aBytes[2]));
                         
@@ -160,22 +161,22 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 String strI1T = "", strI2T = "", strI3T = "", strI4T = "";
                 
                 if( theApp.m_mapU.containsKey( "1A")) { nVal = ( int) theApp.m_mapU.get( "1A"); strU1A = String.format( "%.0f", ( double) nVal / 32.); }
-                if( theApp.m_mapU.containsKey( "2A")) { nVal = ( int) theApp.m_mapU.get( "2A"); strU2A = "" + nVal; }
+                if( theApp.m_mapU.containsKey( "2A")) { nVal = ( int) theApp.m_mapU.get( "2A"); strU2A = String.format( "%.0f", ( double) nVal / 32.); }
                 if( theApp.m_mapU.containsKey( "3A")) { nVal = ( int) theApp.m_mapU.get( "3A"); strU3A = "" + nVal; }
                 if( theApp.m_mapU.containsKey( "4A")) { nVal = ( int) theApp.m_mapU.get( "4A"); strU4A = "" + nVal; }
                 
                 if( theApp.m_mapU.containsKey( "1T")) { nVal = ( int) theApp.m_mapU.get( "1T"); strU1T = "" + nVal; }
-                if( theApp.m_mapU.containsKey( "2T")) { nVal = ( int) theApp.m_mapU.get( "2T"); strU2T = "" + nVal; }
+                if( theApp.m_mapU.containsKey( "2T")) { nVal = ( int) theApp.m_mapU.get( "2T"); strU2T = String.format( "%.0f", ( double) nVal / 32.); }
                 if( theApp.m_mapU.containsKey( "3T")) { nVal = ( int) theApp.m_mapU.get( "3T"); strU3T = "" + nVal; }
                 if( theApp.m_mapU.containsKey( "4T")) { nVal = ( int) theApp.m_mapU.get( "4T"); strU4T = "" + nVal; }
                 
                 if( theApp.m_mapI.containsKey( "1A")) { nVal = ( int) theApp.m_mapI.get( "1A"); strI1A = String.format( "%.0f", ( double) nVal * 4096. / 65535. * 5.); }
-                if( theApp.m_mapI.containsKey( "2A")) { nVal = ( int) theApp.m_mapI.get( "2A"); strI2A = "" + nVal; }
+                if( theApp.m_mapI.containsKey( "2A")) { nVal = ( int) theApp.m_mapI.get( "2A"); strI2A = String.format( "%.0f", ( double) nVal * 4096. / 65535. * 5.); }
                 if( theApp.m_mapI.containsKey( "3A")) { nVal = ( int) theApp.m_mapI.get( "3A"); strI3A = "" + nVal; }
                 if( theApp.m_mapI.containsKey( "4A")) { nVal = ( int) theApp.m_mapI.get( "4A"); strI4A = "" + nVal; }
                 
                 if( theApp.m_mapI.containsKey( "1T")) { nVal = ( int) theApp.m_mapI.get( "1T"); strI1T = "" + nVal; }
-                if( theApp.m_mapI.containsKey( "2T")) { nVal = ( int) theApp.m_mapI.get( "2T"); strI2T = "" + nVal; }
+                if( theApp.m_mapI.containsKey( "2T")) { nVal = ( int) theApp.m_mapI.get( "2T"); strI2T = String.format( "%.0f", ( double) nVal * 4096. / 65535. * 5.); }
                 if( theApp.m_mapI.containsKey( "3T")) { nVal = ( int) theApp.m_mapI.get( "3T"); strI3T = "" + nVal; }
                 if( theApp.m_mapI.containsKey( "4T")) { nVal = ( int) theApp.m_mapI.get( "4T"); strI4T = "" + nVal; }
                 
@@ -345,7 +346,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         getContentPane().add(btnPresetUp);
         btnPresetUp.setBounds(520, 10, 40, 20);
 
-        sldPreset.setMaximum(3000);
+        sldPreset.setMaximum(15000);
         sldPreset.setToolTipText("");
         sldPreset.setValue(1000);
         sldPreset.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
