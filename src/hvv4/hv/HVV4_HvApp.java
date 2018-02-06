@@ -261,7 +261,7 @@ public class HVV4_HvApp {
         }
         
         //настройка логгера
-        String strlog4jPropertiesFile = strAMSrootEnvVar + "/etc/log4j.hvv4hv.properties";
+        String strlog4jPropertiesFile = strAMSrootEnvVar + "/etc/log4j.hvv4.hv.properties";
         File file = new File( strlog4jPropertiesFile);
         if(!file.exists())
             System.out.println("It is not possible to load the given log4j properties file :" + file.getAbsolutePath());
