@@ -57,6 +57,23 @@ public class HVV4_HvSettings {
     private String m_strPort4T;
     public String GetPort4T() { return m_strPort4T; }
     
+    public String GetPort( String strId) {
+        String strResult;
+        switch( strId) {
+            case "1A": strResult = GetPort1A(); break;
+            case "1T": strResult = GetPort1T(); break;
+            case "2A": strResult = GetPort2A(); break;
+            case "2T": strResult = GetPort2T(); break;
+            case "3A": strResult = GetPort3A(); break;
+            case "3T": strResult = GetPort3T(); break;
+            case "4A": strResult = GetPort4A(); break;
+            case "4T": strResult = GetPort4T(); break;
+            default:   strResult = null;        break;
+        }
+        
+        return strResult;
+    }
+    
     //RW SECTION
     
     

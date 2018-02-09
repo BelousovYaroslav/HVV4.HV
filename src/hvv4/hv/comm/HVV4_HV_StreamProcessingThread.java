@@ -6,6 +6,7 @@
 package hvv4.hv.comm;
 
 import hvv4.hv.HVV4_HvApp;
+import hvv4.hv.calibration.HVV4_HvCalibration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
@@ -92,8 +93,16 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
                                 int nB3 = bts[3] & 0xFF;
                                 int nUval = ( nB2 << 8) + nB3;
                                 int nIval = ( nB0 << 8) + nB1;
-                                theApp.m_mapU.put( m_strIdentifier, nUval);
-                                theApp.m_mapI.put( m_strIdentifier, nIval);
+                                
+                                HVV4_HvCalibration calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( m_strIdentifier);
+                                if( calib != null && calib.isReady()) {
+                                    theApp.m_mapU.put( m_strIdentifier, calib.GetVoltageForMgCode( nUval));
+                                    theApp.m_mapI.put( m_strIdentifier, calib.GetCurrentForMgCode( nIval));
+                                }
+                                else {
+                                    theApp.m_mapU.put( m_strIdentifier, nUval);
+                                    theApp.m_mapI.put( m_strIdentifier, nIval);
+                                }
                             }
                             else {
                                 //а ответ пришёл корявый!

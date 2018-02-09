@@ -27,6 +27,10 @@ public class HVV4_HvCalibration {
     
     private TreeMap m_pCalibration;
     
+    public boolean isReady() {
+        return ( m_pCalibration.size() >= 2);
+    }
+    
     public HVV4_HvCalibration( String strCalibFile) {
         m_pCalibration = new TreeMap();
         

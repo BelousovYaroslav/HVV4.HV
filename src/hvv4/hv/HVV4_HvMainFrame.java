@@ -5,6 +5,8 @@
  */
 package hvv4.hv;
 
+import hvv4.hv.calibration.HVV4_HvCalibration;
+import hvv4.hv.comm.HVV4_HV_CircleBuffer;
 import hvv4.hv.comm.HVV4_HV_StreamProcessingThread;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -29,6 +31,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     private HVV4_HvApp theApp;
 
     Timer tRefreshValues;
+    Timer tRefreshStates;
     Timer tPolling;
     Timer tCommandSend;
     Timer tApplyPreset;
@@ -195,6 +198,114 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         });
         tRefreshValues.start();
         
+        tRefreshStates = new Timer( 200, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                edtPreset.setEnabled(       !tglBtnLockScreen.isSelected());
+                btnPresetUp.setEnabled(     !tglBtnLockScreen.isSelected());
+                btnPresetDown.setEnabled(   !tglBtnLockScreen.isSelected());
+                sldPreset.setEnabled(       !tglBtnLockScreen.isSelected());
+                btnPresetApply.setEnabled(  !tglBtnLockScreen.isSelected());
+                btnTurnOff.setEnabled(      !tglBtnLockScreen.isSelected());
+  
+                btn1A.setEnabled(           !tglBtnLockScreen.isSelected());
+                rad1AOff.setEnabled(        !tglBtnLockScreen.isSelected());
+                rad1AOn.setEnabled(         !tglBtnLockScreen.isSelected());
+                rad1AStay.setEnabled(       !tglBtnLockScreen.isSelected());
+                btn2A.setEnabled(           !tglBtnLockScreen.isSelected());
+                rad2AOff.setEnabled(        !tglBtnLockScreen.isSelected());
+                rad2AOn.setEnabled(         !tglBtnLockScreen.isSelected());
+                rad2AStay.setEnabled(       !tglBtnLockScreen.isSelected());
+                btn3A.setEnabled(           !tglBtnLockScreen.isSelected());
+                rad3AOff.setEnabled(        !tglBtnLockScreen.isSelected());
+                rad3AOn.setEnabled(         !tglBtnLockScreen.isSelected());
+                rad3AStay.setEnabled(       !tglBtnLockScreen.isSelected());
+                btn4A.setEnabled(           !tglBtnLockScreen.isSelected());
+                rad4AOff.setEnabled(        !tglBtnLockScreen.isSelected());
+                rad4AOn.setEnabled(         !tglBtnLockScreen.isSelected());
+                rad4AStay.setEnabled(       !tglBtnLockScreen.isSelected());
+
+                btn1T.setEnabled(           !tglBtnLockScreen.isSelected());
+                rad1TOff.setEnabled(        !tglBtnLockScreen.isSelected());
+                rad1TOn.setEnabled(         !tglBtnLockScreen.isSelected());
+                rad1TStay.setEnabled(       !tglBtnLockScreen.isSelected());
+                btn2T.setEnabled(           !tglBtnLockScreen.isSelected());
+                rad2TOff.setEnabled(        !tglBtnLockScreen.isSelected());
+                rad2TOn.setEnabled(         !tglBtnLockScreen.isSelected());
+                rad2TStay.setEnabled(       !tglBtnLockScreen.isSelected());
+                btn3T.setEnabled(           !tglBtnLockScreen.isSelected());
+                rad3TOff.setEnabled(        !tglBtnLockScreen.isSelected());
+                rad3TOn.setEnabled(         !tglBtnLockScreen.isSelected());
+                rad3TStay.setEnabled(       !tglBtnLockScreen.isSelected());
+                btn4T.setEnabled(           !tglBtnLockScreen.isSelected());
+                rad4TOff.setEnabled(        !tglBtnLockScreen.isSelected());
+                rad4TOn.setEnabled(         !tglBtnLockScreen.isSelected());
+                rad4TStay.setEnabled(       !tglBtnLockScreen.isSelected());
+                
+                btnExit.setEnabled(         !tglBtnLockScreen.isSelected());
+                
+                if( theApp.m_mapCalibrations == null) return;
+                
+                Color clr = null;
+                SerialPort port = ( SerialPort) theApp.m_mapSerials.get( "1A");
+                HVV4_HvCalibration calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "1A");
+                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                if( port == null  || !port.isOpened())   clr = Color.RED;
+                btn1A.setForeground( clr);
+                
+                clr = null;
+                port = ( SerialPort) theApp.m_mapSerials.get( "2A");
+                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "2A");
+                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                if( port == null  || !port.isOpened())   clr = Color.RED;
+                btn2A.setForeground( clr);
+                
+                clr = null;
+                port = ( SerialPort) theApp.m_mapSerials.get( "3A");
+                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "3A");
+                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                if( port == null  || !port.isOpened())   clr = Color.RED;
+                btn3A.setForeground( clr);
+                
+                clr = null;
+                port = ( SerialPort) theApp.m_mapSerials.get( "4A");
+                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "4A");
+                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                if( port == null  || !port.isOpened())   clr = Color.RED;
+                btn4A.setForeground( clr);
+                
+                clr = null;
+                port = ( SerialPort) theApp.m_mapSerials.get( "1T");
+                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "1T");
+                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                if( port == null  || !port.isOpened())   clr = Color.RED;
+                btn1T.setForeground( clr);
+                
+                clr = null;
+                port = ( SerialPort) theApp.m_mapSerials.get( "2T");
+                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "2T");
+                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                if( port == null  || !port.isOpened())   clr = Color.RED;
+                btn2T.setForeground( clr);
+                
+                clr = null;
+                port = ( SerialPort) theApp.m_mapSerials.get( "3T");
+                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "3T");
+                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                if( port == null  || !port.isOpened())   clr = Color.RED;
+                btn3T.setForeground( clr);
+                
+                clr = null;
+                port = ( SerialPort) theApp.m_mapSerials.get( "4T");
+                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "4T");
+                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                if( port == null  || !port.isOpened())   clr = Color.RED;
+                btn4T.setForeground( clr);
+            }
+        });
+        tRefreshStates.start();
+        
         //таймер, периодически (при пустой очереди команд по каналу, добавляющий команду опроса текущих значений)
         tPolling = new Timer( 200, new ActionListener() {
 
@@ -254,19 +365,15 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         rad1AOn = new javax.swing.JRadioButton();
         rad1AOff = new javax.swing.JRadioButton();
         rad1AStay = new javax.swing.JRadioButton();
-        lbl1ATitle = new javax.swing.JLabel();
         rad2AOn = new javax.swing.JRadioButton();
         rad2AOff = new javax.swing.JRadioButton();
         rad2AStay = new javax.swing.JRadioButton();
-        lbl2ATitle = new javax.swing.JLabel();
         rad3AOn = new javax.swing.JRadioButton();
         rad3AOff = new javax.swing.JRadioButton();
         rad3AStay = new javax.swing.JRadioButton();
-        lbl3ATitle = new javax.swing.JLabel();
         rad4AOn = new javax.swing.JRadioButton();
         rad4AOff = new javax.swing.JRadioButton();
         rad4AStay = new javax.swing.JRadioButton();
-        lbl4ATitle = new javax.swing.JLabel();
         lblVoltageATitle = new javax.swing.JLabel();
         lblU1A = new javax.swing.JLabel();
         lblU2A = new javax.swing.JLabel();
@@ -280,19 +387,15 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         rad1TOn = new javax.swing.JRadioButton();
         rad1TOff = new javax.swing.JRadioButton();
         rad1TStay = new javax.swing.JRadioButton();
-        lbl1TTitle = new javax.swing.JLabel();
         rad2TOn = new javax.swing.JRadioButton();
         rad2TOff = new javax.swing.JRadioButton();
         rad2TStay = new javax.swing.JRadioButton();
-        lbl2TTitle = new javax.swing.JLabel();
         rad3TOn = new javax.swing.JRadioButton();
         rad3TOff = new javax.swing.JRadioButton();
         rad3TStay = new javax.swing.JRadioButton();
-        lbl3TTitle = new javax.swing.JLabel();
         rad4TOn = new javax.swing.JRadioButton();
         rad4TOff = new javax.swing.JRadioButton();
         rad4TStay = new javax.swing.JRadioButton();
-        lbl4TTitle = new javax.swing.JLabel();
         lblVoltageTTitle = new javax.swing.JLabel();
         lblU1T = new javax.swing.JLabel();
         lblU2T = new javax.swing.JLabel();
@@ -306,6 +409,14 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         tglBtnLockScreen = new javax.swing.JToggleButton();
         lblEmergencyOff = new javax.swing.JLabel();
         btnExit = new javax.swing.JButton();
+        btn1A = new javax.swing.JButton();
+        btn2A = new javax.swing.JButton();
+        btn3A = new javax.swing.JButton();
+        btn4A = new javax.swing.JButton();
+        btn4T = new javax.swing.JButton();
+        btn1T = new javax.swing.JButton();
+        btn2T = new javax.swing.JButton();
+        btn3T = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(580, 540));
@@ -406,12 +517,6 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         getContentPane().add(rad1AStay);
         rad1AStay.setBounds(60, 170, 70, 20);
 
-        lbl1ATitle.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
-        lbl1ATitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl1ATitle.setText("1А");
-        getContentPane().add(lbl1ATitle);
-        lbl1ATitle.setBounds(130, 130, 50, 60);
-
         btnGroup2A.add(rad2AOn);
         rad2AOn.setText("Вкл.");
         getContentPane().add(rad2AOn);
@@ -432,12 +537,6 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         rad2AStay.setText("Ост.");
         getContentPane().add(rad2AStay);
         rad2AStay.setBounds(190, 170, 70, 20);
-
-        lbl2ATitle.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
-        lbl2ATitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl2ATitle.setText("2А");
-        getContentPane().add(lbl2ATitle);
-        lbl2ATitle.setBounds(260, 130, 50, 60);
 
         btnGroup3A.add(rad3AOn);
         rad3AOn.setText("Вкл.");
@@ -460,12 +559,6 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         getContentPane().add(rad3AStay);
         rad3AStay.setBounds(320, 170, 70, 20);
 
-        lbl3ATitle.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
-        lbl3ATitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl3ATitle.setText("3А");
-        getContentPane().add(lbl3ATitle);
-        lbl3ATitle.setBounds(390, 130, 50, 60);
-
         btnGroup4A.add(rad4AOn);
         rad4AOn.setText("Вкл.");
         getContentPane().add(rad4AOn);
@@ -486,12 +579,6 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         rad4AStay.setText("Ост.");
         getContentPane().add(rad4AStay);
         rad4AStay.setBounds(450, 170, 70, 20);
-
-        lbl4ATitle.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
-        lbl4ATitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl4ATitle.setText("4А");
-        getContentPane().add(lbl4ATitle);
-        lbl4ATitle.setBounds(520, 130, 50, 60);
 
         lblVoltageATitle.setText("U, В");
         getContentPane().add(lblVoltageATitle);
@@ -578,12 +665,6 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         getContentPane().add(rad1TStay);
         rad1TStay.setBounds(60, 360, 70, 20);
 
-        lbl1TTitle.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
-        lbl1TTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl1TTitle.setText("1Ш");
-        getContentPane().add(lbl1TTitle);
-        lbl1TTitle.setBounds(130, 320, 50, 60);
-
         btnGroup2T.add(rad2TOn);
         rad2TOn.setText("Вкл.");
         getContentPane().add(rad2TOn);
@@ -604,12 +685,6 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         rad2TStay.setText("Ост.");
         getContentPane().add(rad2TStay);
         rad2TStay.setBounds(190, 360, 70, 20);
-
-        lbl2TTitle.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
-        lbl2TTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl2TTitle.setText("2Ш");
-        getContentPane().add(lbl2TTitle);
-        lbl2TTitle.setBounds(260, 320, 50, 60);
 
         btnGroup3T.add(rad3TOn);
         rad3TOn.setText("Вкл.");
@@ -632,12 +707,6 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         getContentPane().add(rad3TStay);
         rad3TStay.setBounds(320, 360, 70, 20);
 
-        lbl3TTitle.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
-        lbl3TTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl3TTitle.setText("3Ш");
-        getContentPane().add(lbl3TTitle);
-        lbl3TTitle.setBounds(390, 320, 50, 60);
-
         btnGroup4T.add(rad4TOn);
         rad4TOn.setText("Вкл.");
         getContentPane().add(rad4TOn);
@@ -658,12 +727,6 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         rad4TStay.setText("Ост.");
         getContentPane().add(rad4TStay);
         rad4TStay.setBounds(450, 360, 70, 20);
-
-        lbl4TTitle.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
-        lbl4TTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl4TTitle.setText("4Ш");
-        getContentPane().add(lbl4TTitle);
-        lbl4TTitle.setBounds(520, 320, 50, 60);
 
         lblVoltageTTitle.setText("U, В");
         getContentPane().add(lblVoltageTTitle);
@@ -759,12 +822,85 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         getContentPane().add(btnExit);
         btnExit.setBounds(430, 490, 140, 40);
 
+        btn1A.setText("1A");
+        btn1A.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn1AActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btn1A);
+        btn1A.setBounds(130, 135, 50, 50);
+
+        btn2A.setText("2A");
+        btn2A.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn2AActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btn2A);
+        btn2A.setBounds(260, 135, 50, 50);
+
+        btn3A.setText("3A");
+        btn3A.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn3AActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btn3A);
+        btn3A.setBounds(390, 135, 50, 50);
+
+        btn4A.setText("4A");
+        btn4A.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn4AActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btn4A);
+        btn4A.setBounds(520, 135, 50, 50);
+
+        btn4T.setText("4Ш");
+        btn4T.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn4TActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btn4T);
+        btn4T.setBounds(520, 325, 50, 50);
+
+        btn1T.setText("1Ш");
+        btn1T.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn1TActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btn1T);
+        btn1T.setBounds(130, 325, 50, 50);
+
+        btn2T.setText("2Ш");
+        btn2T.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn2TActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btn2T);
+        btn2T.setBounds(260, 325, 50, 50);
+
+        btn3T.setText("3Ш");
+        btn3T.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn3TActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btn3T);
+        btn3T.setBounds(390, 325, 50, 50);
+
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
         tRefreshValues.stop();
+        tRefreshStates.stop();
         tPolling.stop();
         tCommandSend.stop();
         theApp.ClosePorts();
@@ -772,82 +908,10 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnExitActionPerformed
 
     private void tglBtnLockScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglBtnLockScreenActionPerformed
-        if( tglBtnLockScreen.isSelected()) {
+        if( tglBtnLockScreen.isSelected())
             tglBtnLockScreen.setText( "Разблокировать экран");
-            
-            edtPreset.setEnabled( false);
-            btnPresetUp.setEnabled( false);
-            btnPresetDown.setEnabled( false);
-            sldPreset.setEnabled( false);
-            btnPresetApply.setEnabled( false);
-            btnTurnOff.setEnabled( false);
-            
-            rad1AOff.setEnabled( false);
-            rad1AOn.setEnabled( false);
-            rad1AStay.setEnabled( false);
-            rad2AOff.setEnabled( false);
-            rad2AOn.setEnabled( false);
-            rad2AStay.setEnabled( false);
-            rad3AOff.setEnabled( false);
-            rad3AOn.setEnabled( false);
-            rad3AStay.setEnabled( false);
-            rad4AOff.setEnabled( false);
-            rad4AOn.setEnabled( false);
-            rad4AStay.setEnabled( false);
-            
-            rad1TOff.setEnabled( false);
-            rad1TOn.setEnabled( false);
-            rad1TStay.setEnabled( false);
-            rad2TOff.setEnabled( false);
-            rad2TOn.setEnabled( false);
-            rad2TStay.setEnabled( false);
-            rad3TOff.setEnabled( false);
-            rad3TOn.setEnabled( false);
-            rad3TStay.setEnabled( false);
-            rad4TOff.setEnabled( false);
-            rad4TOn.setEnabled( false);
-            rad4TStay.setEnabled( false);
-            
-            btnExit.setEnabled( false);
-        }
-        else {
+        else
             tglBtnLockScreen.setText( "Заблокировать экран");
-            
-            edtPreset.setEnabled( true);
-            btnPresetUp.setEnabled( true);
-            btnPresetDown.setEnabled( true);
-            sldPreset.setEnabled( true);
-            btnPresetApply.setEnabled( true);
-            btnTurnOff.setEnabled( true);
-            
-            rad1AOff.setEnabled( true);
-            rad1AOn.setEnabled( true);
-            rad1AStay.setEnabled( true);
-            rad2AOff.setEnabled( true);
-            rad2AOn.setEnabled( true);
-            rad2AStay.setEnabled( true);
-            rad3AOff.setEnabled( true);
-            rad3AOn.setEnabled( true);
-            rad3AStay.setEnabled( true);
-            rad4AOff.setEnabled( true);
-            rad4AOn.setEnabled( true);
-            rad4AStay.setEnabled( true);
-            
-            rad1TOff.setEnabled( true);
-            rad1TOn.setEnabled( true);
-            rad1TStay.setEnabled( true);
-            rad2TOff.setEnabled( true);
-            rad2TOn.setEnabled( true);
-            rad2TStay.setEnabled( true);
-            rad3TOff.setEnabled( true);
-            rad3TOn.setEnabled( true);
-            rad3TStay.setEnabled( true);
-            rad4TOff.setEnabled( true);
-            rad4TOn.setEnabled( true);
-            rad4TStay.setEnabled( true);
-            
-            btnExit.setEnabled( true);
-        }
     }//GEN-LAST:event_tglBtnLockScreenActionPerformed
 
     private void sldPresetMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sldPresetMouseDragged
@@ -993,10 +1057,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         m_nEmergencyOffClicks++;
         tEmergencyOffClicksDrop.restart();
         if( m_nEmergencyOffClicks == 3) {
-            rad1AOff.setSelected( true); rad1TOff.setSelected( true);
-            rad2AOff.setSelected( true); rad2TOff.setSelected( true);
-            rad3AOff.setSelected( true); rad3TOff.setSelected( true);
-            rad4AOff.setSelected( true); rad4TOff.setSelected( true);
+            lblEmergencyOff.setBackground( new Color( 0, 250, 0));
+            rad1AOff.doClick(); rad1TOff.doClick();
+            rad2AOff.doClick(); rad2TOff.doClick();
+            rad3AOff.doClick(); rad3TOff.doClick();
+            rad4AOff.doClick(); rad4TOff.doClick();
             tEmergencyOffClicksDrop.stop();
         }
 
@@ -1004,15 +1069,13 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             case 1: lblEmergencyOff.setBackground( new Color( 150, 0, 0)); break;
             case 2: lblEmergencyOff.setBackground( new Color( 250, 0, 0)); break;
             case 3:
-                lblEmergencyOff.setBackground( new Color( 0, 250, 0));
+                
                 new Timer( 5000, new ActionListener() {
-
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         Timer t = ( Timer) e.getSource();
                         t.stop();
                         lblEmergencyOff.setBackground( null);
-                        logger.fatal( "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
                     }
                 }).start();
                 m_nEmergencyOffClicks = 0;
@@ -1055,15 +1118,129 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPresetApplyActionPerformed
 
     private void btnTurnOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTurnOffActionPerformed
-        if( rad1AOn.isSelected()) rad1AOff.setSelected( true);
-        if( rad1TOn.isSelected()) rad1TOff.setSelected( true);
-        if( rad2AOn.isSelected()) rad2AOff.setSelected( true);
-        if( rad2TOn.isSelected()) rad2TOff.setSelected( true);
-        if( rad3AOn.isSelected()) rad3AOff.setSelected( true);
-        if( rad3TOn.isSelected()) rad3TOff.setSelected( true);
-        if( rad4AOn.isSelected()) rad4AOff.setSelected( true);
-        if( rad4TOn.isSelected()) rad4TOff.setSelected( true);
+        if( rad1AOn.isSelected()) rad1AOff.doClick();
+        if( rad1TOn.isSelected()) rad1TOff.doClick();
+        if( rad2AOn.isSelected()) rad2AOff.doClick();
+        if( rad2TOn.isSelected()) rad2TOff.doClick();
+        if( rad3AOn.isSelected()) rad3AOff.doClick();
+        if( rad3TOn.isSelected()) rad3TOff.doClick();
+        if( rad4AOn.isSelected()) rad4AOff.doClick();
+        if( rad4TOn.isSelected()) rad4TOff.doClick();
     }//GEN-LAST:event_btnTurnOffActionPerformed
+
+    public void Reconnect( String strIdentifier) {
+        
+        logger.info( "Переподключение " + strIdentifier + ": Останавливаем поток-обработчик");
+        HVV4_HV_StreamProcessingThread pid = ( HVV4_HV_StreamProcessingThread) theApp.m_mapProcessorsRunnables.get( strIdentifier);
+        if( pid != null) {
+            boolean bStopped = true;
+            do {
+                logger.info( "Переподключение " + strIdentifier + ":  Waiting for processor thread " + strIdentifier);
+                pid.m_bStopThread = true;
+                Thread thread = ( Thread) theApp.m_mapProcessorsThreads.get( strIdentifier);
+                try {
+                    thread.join( 1000);
+                    bStopped = false;
+                } catch (InterruptedException ex) {
+                    logger.error( "Переподключение " + strIdentifier + ": Не могу остановить поток " + strIdentifier, ex);
+                }
+
+            } while( bStopped);
+
+            logger.info( "Переподключение " + strIdentifier + ": Waiting for processor thread " + strIdentifier + " ... [OK]");
+        }
+        
+        logger.info( "Переподключение " + strIdentifier + ": Закрываем порт");
+        SerialPort serialPort = null;
+        serialPort = ( SerialPort) theApp.m_mapSerials.get( strIdentifier);
+        if( serialPort != null) {
+            logger.info( "Переподключение " + strIdentifier + ":  Closing port " + serialPort.getPortName());
+            try {
+                serialPort.removeEventListener();
+                serialPort.closePort();
+            }
+            catch( SerialPortException ex) {
+                if( serialPort != null)
+                    logger.error( "Переподключение " + strIdentifier + ": При попытке закрытия " + serialPort.getPortName() + " получили исключительную ситуацию:\n\n", ex);
+                else
+                    logger.error( "Переподключение " + strIdentifier + ": При попытке закрытия [НЕПОНЯТНО ЧЕГО] получили исключительную ситуацию:\n\n", ex);
+            }
+        }
+        
+        
+    
+        HVV4_HV_CircleBuffer cBuffer;
+        HVV4_HvApp.PortReader evListener;
+        serialPort = new SerialPort( theApp.GetSettings().GetPort( strIdentifier));
+        try {
+            //Открываем порт
+            serialPort.openPort();
+
+            //Выставляем параметры
+            serialPort.setParams( 38400,
+                                 SerialPort.DATABITS_8,
+                                 0,//SerialPort.STOPBITS_1,
+                                 SerialPort.PARITY_NONE);
+
+            //Устанавливаем ивент лисенер и маску
+            evListener = theApp.createPortReader( strIdentifier);
+            serialPort.addEventListener( evListener, SerialPort.MASK_RXCHAR);
+            
+            //создаём кольцевой буфер для этого канала связи
+            cBuffer = new HVV4_HV_CircleBuffer();
+            
+            //создаем и запускаем поток обрабатывающий входящие данные из этого канала связи
+            HVV4_HV_StreamProcessingThread processor = new HVV4_HV_StreamProcessingThread( theApp, strIdentifier);
+            Thread thread = new Thread( processor);
+            thread.start();
+            
+            //создаём объект очереди исходящих команд для этого канала связи
+            ConcurrentLinkedQueue q = new ConcurrentLinkedQueue();
+
+            theApp.m_mapCalibrations.put( strIdentifier, new HVV4_HvCalibration( theApp.GetAMSRoot() + "/etc/HVV4.HV." + strIdentifier + ".calib.xml"));
+            theApp.m_mapSerials.put( strIdentifier, serialPort);
+            theApp.m_mapSerialListeners.put( strIdentifier, evListener);
+            theApp.m_mapCircleBuffers.put( strIdentifier, cBuffer);
+            theApp.m_mapProcessorsRunnables.put( strIdentifier, processor);
+            theApp.m_mapProcessorsThreads.put( strIdentifier, thread);
+            theApp.m_mapCommands.put( strIdentifier, q);
+        }
+        catch( SerialPortException ex) {
+            logger.error( "Переподключение " + strIdentifier + ": При попытке соединения c " + theApp.GetSettings().GetPort( strIdentifier) + " получили исключительную ситуацию:\n\n", ex);
+        }
+    }
+    
+    private void btn1AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn1AActionPerformed
+        Reconnect( "1A");
+    }//GEN-LAST:event_btn1AActionPerformed
+
+    private void btn2AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn2AActionPerformed
+        Reconnect( "2A");
+    }//GEN-LAST:event_btn2AActionPerformed
+
+    private void btn3AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn3AActionPerformed
+        Reconnect( "3A");
+    }//GEN-LAST:event_btn3AActionPerformed
+
+    private void btn4AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn4AActionPerformed
+        Reconnect( "4A");
+    }//GEN-LAST:event_btn4AActionPerformed
+
+    private void btn1TActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn1TActionPerformed
+        Reconnect( "1T");
+    }//GEN-LAST:event_btn1TActionPerformed
+
+    private void btn2TActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn2TActionPerformed
+        Reconnect( "2T");
+    }//GEN-LAST:event_btn2TActionPerformed
+
+    private void btn3TActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn3TActionPerformed
+        Reconnect( "3T");
+    }//GEN-LAST:event_btn3TActionPerformed
+
+    private void btn4TActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn4TActionPerformed
+        Reconnect( "4T");
+    }//GEN-LAST:event_btn4TActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1102,6 +1279,14 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn1A;
+    private javax.swing.JButton btn1T;
+    private javax.swing.JButton btn2A;
+    private javax.swing.JButton btn2T;
+    private javax.swing.JButton btn3A;
+    private javax.swing.JButton btn3T;
+    private javax.swing.JButton btn4A;
+    private javax.swing.JButton btn4T;
     private javax.swing.JButton btnExit;
     private javax.swing.ButtonGroup btnGroup1A;
     private javax.swing.ButtonGroup btnGroup1T;
@@ -1116,14 +1301,6 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnPresetUp;
     private javax.swing.JButton btnTurnOff;
     private javax.swing.JTextField edtPreset;
-    private javax.swing.JLabel lbl1ATitle;
-    private javax.swing.JLabel lbl1TTitle;
-    private javax.swing.JLabel lbl2ATitle;
-    private javax.swing.JLabel lbl2TTitle;
-    private javax.swing.JLabel lbl3ATitle;
-    private javax.swing.JLabel lbl3TTitle;
-    private javax.swing.JLabel lbl4ATitle;
-    private javax.swing.JLabel lbl4TTitle;
     private javax.swing.JLabel lblCurrentATitle;
     private javax.swing.JLabel lblCurrentTTitle;
     private javax.swing.JLabel lblEmergencyOff;

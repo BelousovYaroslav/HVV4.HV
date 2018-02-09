@@ -5,6 +5,7 @@
  */
 package hvv4.hv;
 
+import hvv4.hv.calibration.HVV4_HvCalibration;
 import hvv4.hv.comm.HVV4_HV_CircleBuffer;
 import hvv4.hv.comm.HVV4_HV_StreamProcessingThread;
 import hvv_resources.HVV_Resources;
@@ -55,6 +56,7 @@ public class HVV4_HvApp {
     public final TreeMap m_mapProcessorsThreads;
     public /*final*/ TreeMap m_mapStates;
     public final TreeMap m_mapCommands;
+    public final TreeMap m_mapCalibrations;
     
     public static final int STATE_DISCONNECTED = 0;
     public static final int STATE_REQUESTED = 1;
@@ -146,7 +148,8 @@ public class HVV4_HvApp {
             
             //создаём объект очереди исходящих команд для этого канала связи
             ConcurrentLinkedQueue q = new ConcurrentLinkedQueue();
-                    
+
+            m_mapCalibrations.put( strIdentifier, new HVV4_HvCalibration( GetAMSRoot() + "/etc/HVV4.HV." + strIdentifier + ".calib.xml"));
             m_mapSerials.put( strIdentifier, serialPort);
             m_mapSerialListeners.put( strIdentifier, evListener);
             m_mapCircleBuffers.put( strIdentifier, cBuffer);
@@ -182,6 +185,7 @@ public class HVV4_HvApp {
             m_mapProcessorsRunnables = null;
             m_mapProcessorsThreads = null;
             m_mapCommands = null;
+            m_mapCalibrations = null;
             return;
         }
         
@@ -196,6 +200,7 @@ public class HVV4_HvApp {
         m_mapProcessorsRunnables = new TreeMap();
         m_mapProcessorsThreads = new TreeMap();
         m_mapCommands = new TreeMap();
+        m_mapCalibrations = new TreeMap();
     }
     
     public void start() {
@@ -301,7 +306,11 @@ public class HVV4_HvApp {
         return dt;
     }
     
-    private class PortReader implements SerialPortEventListener {
+    public PortReader createPortReader( String strId) {
+        return new PortReader( this, strId);
+    }
+    
+    public class PortReader implements SerialPortEventListener {
 
         final HVV4_HvApp theApp;
         final String m_strIdentifier;
