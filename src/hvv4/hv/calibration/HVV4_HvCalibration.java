@@ -113,6 +113,11 @@ public class HVV4_HvCalibration {
         
         double k = ( ( double) ( nCode2 - nCode1)) / ( ( double) ( nCurr2 - nCurr1));
         int nResult = nCode1 + ( int) ( k * ( nDesiredCurrent - nCurr1));
+        
+        logger.debug( String.format("CODE1=%d\tCODE2=%d", nCode1, nCode2));
+        logger.debug( String.format("CURR1=%d\tCURR2=%d", nCurr1, nCurr2));
+        logger.debug( String.format("DSRDI=%d\tRESLT=%d", nDesiredCurrent, nResult));
+        
         return nResult;
     }
     

@@ -65,7 +65,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             public void actionPerformed(ActionEvent e) {
                 tApplyPreset.stop();
                 int value = sldPreset.getValue();
-                int code = value;
+                int nApplyCode;
                 Set set = theApp.m_mapSerials.entrySet();
                 Iterator it = set.iterator();
                 while( it.hasNext()) {
@@ -87,11 +87,16 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                         case "4T": if( rad4TOn.isSelected()) bApply = true; break;
                     }
                     
+                    nApplyCode = value;
+                    HVV4_HvCalibration calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( strId);
+                    if( calib != null && calib.isReady() && theApp.GetSettings().GetUseCalibToMg())
+                        nApplyCode = calib.GetPcCodeForCurrent( nApplyCode);
+                        
                     if( bApply) {
                         byte aBytes[] = new byte[3];
                         aBytes[0] = 0x01;
-                        aBytes[1] = ( byte) ( code & 0xFF);
-                        aBytes[2] = ( byte) ( ( code & 0xFF00) >> 8);
+                        aBytes[1] = ( byte) ( nApplyCode & 0xFF);
+                        aBytes[2] = ( byte) ( ( nApplyCode & 0xFF00) >> 8);
                         
                         
                         q.add( aBytes);

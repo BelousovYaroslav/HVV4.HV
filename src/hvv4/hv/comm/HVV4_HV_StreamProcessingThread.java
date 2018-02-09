@@ -84,7 +84,8 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
 
                             byte [] bts = new byte[ 5];
                             cBuffer.getAnswer( 5, bts);
-
+                            logger.info( String.format( m_strIdentifier + " <<< 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
+                                    bts[0], bts[1], bts[2], bts[3], bts[4])); 
                             if( bts[4] == 0x0D) {
                                 //ответ корректный
                                 int nB0 = bts[0] & 0xFF;
@@ -95,7 +96,7 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
                                 int nIval = ( nB0 << 8) + nB1;
                                 
                                 HVV4_HvCalibration calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( m_strIdentifier);
-                                if( calib != null && calib.isReady()) {
+                                if( calib != null && calib.isReady() && theApp.GetSettings().GetUseCalibFromMg()) {
                                     theApp.m_mapU.put( m_strIdentifier, calib.GetVoltageForMgCode( nUval));
                                     theApp.m_mapI.put( m_strIdentifier, calib.GetCurrentForMgCode( nIval));
                                 }
@@ -106,8 +107,7 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
                             }
                             else {
                                 //а ответ пришёл корявый!
-                                logger.warn( m_strIdentifier + " FAILED!");
-                                //TODO FAIL
+                                logger.warn( m_strIdentifier + ": got 5 bytes (they were 5), but there is no 0x0D at the end. Skipping!");
                             }
                         
                         }
@@ -115,8 +115,11 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
                             //пришло больше 5 байт. Охренеть!
                             byte [] bts = new byte[ nLen];
                             cBuffer.getAnswer( nLen, bts);
-                            logger.warn( m_strIdentifier + " FAILED!");
-                            //TODO FAIL
+                            
+                            String strMsg = m_strIdentifier + " <<< ";
+                            for( int i=0; i<nLen; strMsg += String.format( "0x%02X ", bts[i++]));
+                            logger.warn( strMsg);
+                            logger.warn( m_strIdentifier + ": got more than 5 bytes in respond! Purge them!");
                         }
                     
                         //считаем что ответ пришёл - сбрасываем ожидание
@@ -133,19 +136,21 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
                     //в любом случае забираем из CircleBuffer
                     byte [] bts = new byte[ nLen];
                     cBuffer.getAnswer( nLen, bts);
-                        
+                    
+                    String strMsg = m_strIdentifier + "<<< ";
+                    for( int i=0; i<nLen; strMsg += String.format( "0x%02X ", bts[i++]));
+                    logger.warn( strMsg);
+                            
                     if( nLen == 1) {
                         if( bts[0] == 0xFE) {
-                            logger.warn( "Отловлен одинокий странный FE");
+                            logger.warn( m_strIdentifier + ": Мы не ждём ответа, однако отловлен одинокий странный 0xFE");
                         }
                         else {
-                            logger.warn( m_strIdentifier + " FAILED!");
-                            //TODO FAIL
+                            logger.warn( m_strIdentifier + ": Мы не ждём ответа, однако имеем один пришедший байт, не 0xFE!");
                         }
                     }
                     else {
-                        logger.warn( m_strIdentifier + " FAILED!");
-                        //TODO FAIL
+                        logger.warn( m_strIdentifier + ": Мы не ждём ответа, однако имеем странные несколько пришедших байт!");
                     }
                 }
             }

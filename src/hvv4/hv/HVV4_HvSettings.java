@@ -74,6 +74,12 @@ public class HVV4_HvSettings {
         return strResult;
     }
     
+    private boolean m_bUseCalibToMg;
+    public boolean GetUseCalibToMg() { return m_bUseCalibToMg;}
+    
+    private boolean m_bUseCalibFromMg;
+    public boolean GetUseCalibFromMg() { return m_bUseCalibFromMg;}
+    
     //RW SECTION
     
     
@@ -89,6 +95,9 @@ public class HVV4_HvSettings {
         m_strPort3T = "/dev/ttyUSB5";
         m_strPort4A = "/dev/ttyUSB6";
         m_strPort4T = "/dev/ttyUSB7";
+        
+        m_bUseCalibToMg = false;
+        m_bUseCalibFromMg = false;
         
         ReadSettings();
     }
@@ -114,6 +123,9 @@ public class HVV4_HvSettings {
                 //logger.debug( "Pairs: [" + name + " : " + value + "]");
                 
                 if( "timezone".equals( name)) m_nTimeZoneShift = Integer.parseInt( value);
+                
+                if( "UseCalibFromMg".equals( name)) if( "true".equals( value)) m_bUseCalibFromMg = true;
+                if( "UseCalibToMg".equals( name))   if( "true".equals( value)) m_bUseCalibToMg = true;
                 
                 if( "singleInstancePort.HVV4_hv".equals( name)) m_nSingleInstanceSocketServerPort = Integer.parseInt( value);
                 
