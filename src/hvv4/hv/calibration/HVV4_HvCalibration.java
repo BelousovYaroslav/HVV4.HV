@@ -150,6 +150,10 @@ public class HVV4_HvCalibration {
         
         double k = ( ( double) ( nCurr2 - nCurr1)) / ( ( double) ( nCode2 - nCode1));
         int nResult = nCurr1 + ( int) ( k * ( nMgCode - nCode1));
+        
+        logger.debug( String.format("CODE1=%d\tCODE2=%d", nCode1, nCode2));
+        logger.debug( String.format("CURR1=%d\tCURR2=%d", nCurr1, nCurr2));
+        logger.debug( String.format("CODE =%d\tRESLT=%d", nMgCode, nResult));
         return nResult;
     }
     
@@ -187,6 +191,10 @@ public class HVV4_HvCalibration {
         
         double k = ( ( double) ( nVolt2 - nVolt1)) / ( ( double) ( nCode2 - nCode1));
         int nResult = nVolt1 + ( int) ( k * ( nMgCode - nCode1));
+        
+        logger.debug( String.format("CODE1=%d\tCODE2=%d", nCode1, nCode2));
+        logger.debug( String.format("VOLT1=%d\tVOLT2=%d", nVolt1, nVolt2));
+        logger.debug( String.format("CODE =%d\tRESLT=%d", nMgCode, nResult));
         return nResult;
     }
 }

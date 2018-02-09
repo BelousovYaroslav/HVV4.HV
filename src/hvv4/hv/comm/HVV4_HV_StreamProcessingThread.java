@@ -45,7 +45,7 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
                 }
                 
             });
-            logger.info( m_strIdentifier + " TIMEOUT STARTED!");
+            logger.trace( m_strIdentifier + " TIMEOUT STARTED!");
             m_TimeOut.start();
             bResult = true;
         }

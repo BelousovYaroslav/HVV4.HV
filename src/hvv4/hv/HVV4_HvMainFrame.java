@@ -135,13 +135,13 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                             try {
                                 port.writeBytes( aBytes);
                                 proc.WaitForRespond();
-                                logger.info( strId + ": SEND CMD: (" + strCmd + ") sent");
+                                logger.trace( strId + ": SEND CMD: (" + strCmd + ") sent");
                             } catch (SerialPortException ex) {
                                 logger.error( strId + ": SEND CMD: FAIL: COM-Communication exception", ex);
                             }
                         }
                         else
-                            logger.debug( strId + ": SEND CMD: EMPTY");
+                            logger.trace( strId + ": SEND CMD: EMPTY");
                     }
                     else {
                         logger.warn( strId + ": SEND CMD: REJECTED");
@@ -325,7 +325,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                         byte aBytes[] = new byte[1];
                         aBytes[0] = 0x05;
                         q.add( aBytes);
-                        logger.info( strId + ": POLLING: queued");
+                        logger.trace( strId + ": POLLING: queued");
                     }
                     else {
                         logger.info( strId + ": POLLING: REJECTED");
