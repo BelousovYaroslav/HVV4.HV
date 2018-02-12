@@ -100,15 +100,17 @@ public class HVV4_HvCalibration {
         unit = ( Hvv4HvCalibrationUnit) entry.getValue();
         nCode2 = unit.GetCodePreset();
         nCurr2 = unit.GetCurrent();
-            
-        while( it.hasNext()) {        
-            entry = (Map.Entry) it.next();
-            unit = ( Hvv4HvCalibrationUnit) entry.getValue();
-            nCode1 = nCode2;
-            nCurr1 = nCurr2;
-            nCode2 = unit.GetCodePreset();
-            nCurr2 = unit.GetCurrent();
-            if( nDesiredCurrent <= nCurr2) break;
+
+        if( nDesiredCurrent > nCurr2) {
+            while( it.hasNext()) {        
+                entry = (Map.Entry) it.next();
+                unit = ( Hvv4HvCalibrationUnit) entry.getValue();
+                nCode1 = nCode2;
+                nCurr1 = nCurr2;
+                nCode2 = unit.GetCodePreset();
+                nCurr2 = unit.GetCurrent();
+                if( nDesiredCurrent <= nCurr2) break;
+            }
         }
         
         double k = ( ( double) ( nCode2 - nCode1)) / ( ( double) ( nCurr2 - nCurr1));
@@ -142,15 +144,17 @@ public class HVV4_HvCalibration {
         unit = ( Hvv4HvCalibrationUnit) entry.getValue();
         nCode2 = unit.GetCodeCurrent();
         nCurr2 = unit.GetCurrent();
-            
-        while( it.hasNext()) {        
-            entry = (Map.Entry) it.next();
-            unit = ( Hvv4HvCalibrationUnit) entry.getValue();
-            nCode1 = nCode2;
-            nCurr1 = nCurr2;
-            nCode2 = unit.GetCodeCurrent();
-            nCurr2 = unit.GetCurrent();
-            if( nMgCode <= nCode2) break;
+        
+        if( nMgCode > nCode2) {
+            while( it.hasNext()) {        
+                entry = (Map.Entry) it.next();
+                unit = ( Hvv4HvCalibrationUnit) entry.getValue();
+                nCode1 = nCode2;
+                nCurr1 = nCurr2;
+                nCode2 = unit.GetCodeCurrent();
+                nCurr2 = unit.GetCurrent();
+                if( nMgCode <= nCode2) break;
+            }
         }
         
         double k = ( ( double) ( nCurr2 - nCurr1)) / ( ( double) ( nCode2 - nCode1));
@@ -173,7 +177,7 @@ public class HVV4_HvCalibration {
         int nVolt1, nVolt2;
         
         it = set.iterator(); 
-        
+       set.
         Map.Entry entry = (Map.Entry) it.next();
         Hvv4HvCalibrationUnit unit = ( Hvv4HvCalibrationUnit) entry.getValue();
         nCode1 = unit.GetCodeVoltage();
@@ -183,15 +187,17 @@ public class HVV4_HvCalibration {
         unit = ( Hvv4HvCalibrationUnit) entry.getValue();
         nCode2 = unit.GetCodeVoltage();
         nVolt2 = unit.GetVoltage();
-            
-        while( it.hasNext()) {        
-            entry = (Map.Entry) it.next();
-            unit = ( Hvv4HvCalibrationUnit) entry.getValue();
-            nCode1 = nCode2;
-            nVolt1 = nVolt2;
-            nCode2 = unit.GetCodeVoltage();
-            nVolt2 = unit.GetVoltage();
-            if( nMgCode <= nCode2) break;
+        
+        if( nMgCode > nCode2) {
+            while( it.hasNext()) {        
+                entry = (Map.Entry) it.next();
+                unit = ( Hvv4HvCalibrationUnit) entry.getValue();
+                nCode1 = nCode2;
+                nVolt1 = nVolt2;
+                nCode2 = unit.GetCodeVoltage();
+                nVolt2 = unit.GetVoltage();
+                if( nMgCode <= nCode2) break;
+            }
         }
         
         double k = ( ( double) ( nVolt2 - nVolt1)) / ( ( double) ( nCode2 - nCode1));
