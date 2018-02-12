@@ -177,7 +177,7 @@ public class HVV4_HvCalibration {
         int nVolt1, nVolt2;
         
         it = set.iterator(); 
-       set.
+       //set.
         Map.Entry entry = (Map.Entry) it.next();
         Hvv4HvCalibrationUnit unit = ( Hvv4HvCalibrationUnit) entry.getValue();
         nCode1 = unit.GetCodeVoltage();

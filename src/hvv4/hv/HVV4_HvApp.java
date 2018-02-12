@@ -76,11 +76,24 @@ public class HVV4_HvApp {
             boolean bStopped = true;
             do {
                 logger.info( ">> Waiting for processor thread " + strId);
+                
                 pid.m_bStopThread = true;
                 Thread thread = ( Thread) m_mapProcessorsThreads.get( strId);
+                
+                if( thread.isAlive())
+                    logger.info( strId + ": ALIVE");
+                else
+                    logger.info( strId + ": NOT ALIVE");
+                
                 try {
                     thread.join( 1000);
+                    if( thread.isAlive())
+                        logger.info( strId + ": ALIVE");
+                    else
+                        logger.info( strId + ": NOT ALIVE");
                     bStopped = false;
+                    if( pid.m_bRunning)
+                        bStopped = true;
                 } catch (InterruptedException ex) {
                     logger.error( ">> Не могу остановить поток " + strId, ex);
                 }
@@ -119,6 +132,7 @@ public class HVV4_HvApp {
         SerialPort serialPort;
         PortReader evListener;
         
+        logger.info( strIdentifier + ": OPENING " + strPort);
         serialPort = new SerialPort( strPort);
         try {
             //Открываем порт

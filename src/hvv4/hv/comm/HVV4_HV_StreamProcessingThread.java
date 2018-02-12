@@ -65,15 +65,20 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
     public void run() {
         m_bRunning = true;
         m_bStopThread = false;
+        logger.trace( m_strIdentifier + "P0");
         
         do {
             HVV4_HV_CircleBuffer cBuffer = ( HVV4_HV_CircleBuffer) theApp.m_mapCircleBuffers.get( m_strIdentifier);
-            if( cBuffer == null) continue;
+            if( cBuffer == null) {
+                logger.warn( m_strIdentifier + " CBUFFER = NULL");
+                continue;
+            }
             int nLen = cBuffer.getReadyIncomingDataLen();
+            logger.trace( m_strIdentifier + " P1 " + nLen);
             if( nLen > 0) {
                 if( m_bWaitingResponse) {
                     //мы ждём ответа
-                    
+                    //logger.info( "I2 expecting");
                     if( nLen < 5) {
                         //мы принимаем только 5-байтные ответы... меньше - может не долетело? подождем
                         continue;
@@ -132,6 +137,7 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
                 }
                 else {
                     //мы НЕ ждём ответа.... прилетел FE?
+                    //logger.info( "I2 not expecting");
                     
                     //в любом случае забираем из CircleBuffer
                     byte [] bts = new byte[ nLen];
@@ -154,7 +160,24 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
                     }
                 }
             }
-            
+            try {
+                Thread.sleep( 10);
+            }
+            catch( InterruptedException e) {
+                logger.error( e);
+                m_bStopThread = true;
+                m_bRunning = false;
+                return;
+            }
+            logger.trace( m_strIdentifier + " Q1 " + m_bStopThread);
         } while( m_bStopThread == false);
+        
+        if( m_TimeOut != null && m_TimeOut.isRunning()) {
+            m_TimeOut.stop();
+            m_TimeOut = null;
+        }
+        
+        logger.info( m_strIdentifier + " Q2 processor stopped!");
+        m_bRunning = false;
     }
 }

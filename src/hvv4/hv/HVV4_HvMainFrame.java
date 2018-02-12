@@ -9,6 +9,7 @@ import hvv4.hv.calibration.HVV4_HvCalibration;
 import hvv4.hv.comm.HVV4_HV_CircleBuffer;
 import hvv4.hv.comm.HVV4_HV_StreamProcessingThread;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -43,7 +44,21 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
      */
     public HVV4_HvMainFrame( HVV4_HvApp app) {
         initComponents();
+        
+        String strOS = System.getProperty("os.name");
+        logger.info( "OS:" + strOS);
+        if( strOS.contains("win")) {
+            //setResizable( true);
+            Dimension d = getSize();
+            d.height += 50;
+            setSize( d);
+            //setResizable( false);
+        }
+        
         theApp = app;
+        
+        btnPresetUp.setIcon( theApp.GetResources().getIconUp());
+        btnPresetDown.setIcon( theApp.GetResources().getIconTriaDown());
         
         m_nEmergencyOffClicks = 0;
         tEmergencyOffClicksDrop = new Timer( 500, new ActionListener() {
@@ -149,7 +164,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                             logger.trace( strId + ": SEND CMD: EMPTY");
                     }
                     else {
-                        logger.warn( strId + ": SEND CMD: REJECTED");
+                        logger.warn( strId + ": SEND CMD: BUSY (waiting for result)");
                     }
                 }
             }
@@ -426,6 +441,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(580, 540));
         setResizable(false);
+        addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                formMouseWheelMoved(evt);
+            }
+        });
         getContentPane().setLayout(null);
 
         lblSetCurrentTitle.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
@@ -932,13 +952,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_sldPresetMouseReleased
 
     private void sldPresetMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_sldPresetMouseWheelMoved
-        int value = sldPreset.getValue();
-        value -= evt.getWheelRotation() * 100;
-        if( value < 0) value = 0;
-        if( value > sldPreset.getMaximum()) value = sldPreset.getMaximum();
-        sldPreset.setValue( value);
-        edtPreset.setText( "" + value);
-        tApplyPreset.restart();
+        
     }//GEN-LAST:event_sldPresetMouseWheelMoved
 
     private void btnPresetUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPresetUpActionPerformed
@@ -1090,14 +1104,30 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_lblEmergencyOffMouseClicked
 
     private void btnPresetApplyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPresetApplyActionPerformed
+        if( edtPreset.hasFocus()) {
+            String strEdt = edtPreset.getText();
+            int value;
+            try {
+                value = Integer.parseInt(strEdt);
+                if( value < 0) value = 0;
+                if( value > sldPreset.getMaximum()) value = sldPreset.getMaximum();
+                sldPreset.setValue( value);
+                edtPreset.setText( "" + value);
+                tApplyPreset.restart();
+            } catch (NumberFormatException nfe) {
+                logger.warn( nfe);
+                return;
+            }
+            //return;
+        }
+        
+        /*
         Set set = theApp.m_mapSerials.entrySet();
         Iterator it = set.iterator();
         while( it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
 
             String strId = ( String) entry.getKey();
-            SerialPort port = ( SerialPort) entry.getValue();
-
             ConcurrentLinkedQueue q = ( ConcurrentLinkedQueue) theApp.m_mapCommands.get( strId);
             
             boolean bApply = false;
@@ -1120,6 +1150,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
             
         }
+        */
     }//GEN-LAST:event_btnPresetApplyActionPerformed
 
     private void btnTurnOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTurnOffActionPerformed
@@ -1246,6 +1277,16 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     private void btn4TActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn4TActionPerformed
         Reconnect( "4T");
     }//GEN-LAST:event_btn4TActionPerformed
+
+    private void formMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_formMouseWheelMoved
+        int value = sldPreset.getValue();
+        value -= evt.getWheelRotation() * 100;
+        if( value < 0) value = 0;
+        if( value > sldPreset.getMaximum()) value = sldPreset.getMaximum();
+        sldPreset.setValue( value);
+        edtPreset.setText( "" + value);
+        tApplyPreset.restart();
+    }//GEN-LAST:event_formMouseWheelMoved
 
     /**
      * @param args the command line arguments
