@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -103,10 +104,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                     }
                     
                     nApplyCode = value;
-                    HVV4_HvCalibration calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( strId);
-                    if( calib != null && calib.isReady() && theApp.GetSettings().GetUseCalibToMg())
-                        nApplyCode = calib.GetPcCodeForCurrent( nApplyCode);
-                        
+                    if( theApp.GetSettings().GetUseCalibToMg() && theApp.m_mapCalibrationP != null) {
+                        HVV4_HvCalibration calib = ( HVV4_HvCalibration) theApp.m_mapCalibrationP.get( strId);
+                        nApplyCode = calib.GetValForCode( nApplyCode);
+                    }
+                    
                     if( bApply) {
                         byte aBytes[] = new byte[3];
                         aBytes[0] = 0x01;
@@ -265,61 +267,95 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 
                 btnExit.setEnabled(         !tglBtnLockScreen.isSelected());
                 
-                if( theApp.m_mapCalibrations == null) return;
+                if( theApp.m_mapCalibrationP == null) return;
+                if( theApp.m_mapCalibrationI == null) return;
+                if( theApp.m_mapCalibrationU == null) return;
                 
                 Color clr = null;
                 SerialPort port = ( SerialPort) theApp.m_mapSerials.get( "1A");
-                HVV4_HvCalibration calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "1A");
-                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                HVV4_HvCalibration calibP = ( HVV4_HvCalibration) theApp.m_mapCalibrationP.get( "1A");
+                HVV4_HvCalibration calibI = ( HVV4_HvCalibration) theApp.m_mapCalibrationI.get( "1A");
+                HVV4_HvCalibration calibU = ( HVV4_HvCalibration) theApp.m_mapCalibrationU.get( "1A");
+                if( calibP == null || calibP.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
                 btn1A.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "2A");
-                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "2A");
-                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                calibP = ( HVV4_HvCalibration) theApp.m_mapCalibrationP.get( "2A");
+                calibI = ( HVV4_HvCalibration) theApp.m_mapCalibrationI.get( "2A");
+                calibU = ( HVV4_HvCalibration) theApp.m_mapCalibrationU.get( "2A");
+                if( calibP == null || calibP.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
                 btn2A.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "3A");
-                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "3A");
-                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                calibP = ( HVV4_HvCalibration) theApp.m_mapCalibrationP.get( "3A");
+                calibI = ( HVV4_HvCalibration) theApp.m_mapCalibrationI.get( "3A");
+                calibU = ( HVV4_HvCalibration) theApp.m_mapCalibrationU.get( "3A");
+                if( calibP == null || calibP.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
                 btn3A.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "4A");
-                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "4A");
-                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                calibP = ( HVV4_HvCalibration) theApp.m_mapCalibrationP.get( "4A");
+                calibI = ( HVV4_HvCalibration) theApp.m_mapCalibrationI.get( "4A");
+                calibU = ( HVV4_HvCalibration) theApp.m_mapCalibrationU.get( "4A");
+                if( calibP == null || calibP.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
                 btn4A.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "1T");
-                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "1T");
-                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                calibP = ( HVV4_HvCalibration) theApp.m_mapCalibrationP.get( "1T");
+                calibI = ( HVV4_HvCalibration) theApp.m_mapCalibrationI.get( "1T");
+                calibU = ( HVV4_HvCalibration) theApp.m_mapCalibrationU.get( "1T");
+                if( calibP == null || calibP.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
                 btn1T.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "2T");
-                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "2T");
-                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                calibP = ( HVV4_HvCalibration) theApp.m_mapCalibrationP.get( "2T");
+                calibI = ( HVV4_HvCalibration) theApp.m_mapCalibrationI.get( "2T");
+                calibU = ( HVV4_HvCalibration) theApp.m_mapCalibrationU.get( "2T");
+                if( calibP == null || calibP.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
                 btn2T.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "3T");
-                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "3T");
-                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                calibP = ( HVV4_HvCalibration) theApp.m_mapCalibrationP.get( "3T");
+                calibI = ( HVV4_HvCalibration) theApp.m_mapCalibrationI.get( "3T");
+                calibU = ( HVV4_HvCalibration) theApp.m_mapCalibrationU.get( "3T");
+                if( calibP == null || calibP.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
                 btn3T.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "4T");
-                calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( "4T");
-                if( calib == null || !calib.isReady())   clr = Color.YELLOW;
+                calibP = ( HVV4_HvCalibration) theApp.m_mapCalibrationP.get( "4T");
+                calibI = ( HVV4_HvCalibration) theApp.m_mapCalibrationI.get( "4T");
+                calibU = ( HVV4_HvCalibration) theApp.m_mapCalibrationU.get( "4T");
+                if( calibP == null || calibP.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
+                if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
                 btn4T.setForeground( clr);
             }
@@ -1233,7 +1269,18 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             //создаём объект очереди исходящих команд для этого канала связи
             ConcurrentLinkedQueue q = new ConcurrentLinkedQueue();
 
-            theApp.m_mapCalibrations.put( strIdentifier, new HVV4_HvCalibration( theApp.GetAMSRoot() + "/etc/HVV4.HV." + strIdentifier + ".calib.xml"));
+            theApp.m_mapCalibrationP.put( strIdentifier, new HVV4_HvCalibration(
+                            theApp.GetAMSRoot() + File.separator +
+                            "etc" + File.separator +
+                            "HVV4.HV." + strIdentifier + ".calib.xml", "CalibrationP"));
+            theApp.m_mapCalibrationI.put( strIdentifier, new HVV4_HvCalibration(
+                            theApp.GetAMSRoot() + File.separator +
+                            "etc" + File.separator +
+                            "HVV4.HV." + strIdentifier + ".calib.xml", "CalibrationI"));
+            theApp.m_mapCalibrationU.put( strIdentifier, new HVV4_HvCalibration(
+                            theApp.GetAMSRoot() + File.separator +
+                            "etc" + File.separator +
+                            "HVV4.HV." + strIdentifier + ".calib.xml", "CalibrationU"));
             theApp.m_mapSerials.put( strIdentifier, serialPort);
             theApp.m_mapSerialListeners.put( strIdentifier, evListener);
             theApp.m_mapCircleBuffers.put( strIdentifier, cBuffer);

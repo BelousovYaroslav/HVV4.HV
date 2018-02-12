@@ -22,7 +22,7 @@ public class HVV4_HvCalibrationTest {
     HVV4_HvCalibration instance;
     public HVV4_HvCalibrationTest() {
         BasicConfigurator.configure();
-        instance = new HVV4_HvCalibration( "testCalibFile.xml");
+        instance = new HVV4_HvCalibration( "testCalibFileP.xml", "CalibrationP");
     }
     
     @BeforeClass
@@ -42,50 +42,15 @@ public class HVV4_HvCalibrationTest {
     }
 
     /**
-     * Test of GetPcCodeForCurrent method, of class HVV4_HvCalibration.
+     * Test of GetValueForCode method, of class HVV4_HvCalibration.
      */
     @Test
-    public void testGetPcCodeForCurrent() {
-        System.out.println("GetPcCodeForCurrent");
-        int nDesiredCurrent = 17;
+    public void testGetValueForCode() {
+        System.out.println("GetValueForCode");
+        int nDesiredCurrent = 15;
         int expResult = 15;
-        int result = instance.GetPcCodeForCurrent(nDesiredCurrent);
+        int result = instance.GetValForCode( nDesiredCurrent);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of GetCurrentForMgCode method, of class HVV4_HvCalibration.
-     */
-    @Test
-    public void testGetCurrentForMgCode() {
-        System.out.println("GetCurrentForMgCode");
-        int nMgCode = 16;
-        int expResult = 17;
-        int result = instance.GetCurrentForMgCode(nMgCode);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
-    }
-    
-    /**
-     * Test of GetVoltageForMgCode method, of class HVV4_HvCalibration.
-     */
-    @Test
-    public void testGetVoltageForMgCode() {
-        System.out.println("GetVoltageForMgCode");
-        
-        int nMgCode = 15;
-        int expResult = 16;
-        int result = instance.GetVoltageForMgCode(nMgCode);
-        assertEquals(expResult, result);
-        
-        nMgCode = 115;
-        expResult = 116;
-        result = instance.GetVoltageForMgCode(nMgCode);
-        assertEquals(expResult, result);
-        
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }

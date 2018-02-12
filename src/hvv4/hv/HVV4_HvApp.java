@@ -56,7 +56,9 @@ public class HVV4_HvApp {
     public final TreeMap m_mapProcessorsThreads;
     public /*final*/ TreeMap m_mapStates;
     public final TreeMap m_mapCommands;
-    public final TreeMap m_mapCalibrations;
+    public final TreeMap m_mapCalibrationP;
+    public final TreeMap m_mapCalibrationI;
+    public final TreeMap m_mapCalibrationU;
     
     public static final int STATE_DISCONNECTED = 0;
     public static final int STATE_REQUESTED = 1;
@@ -163,11 +165,24 @@ public class HVV4_HvApp {
             //создаём объект очереди исходящих команд для этого канала связи
             ConcurrentLinkedQueue q = new ConcurrentLinkedQueue();
 
-            m_mapCalibrations.put( strIdentifier, new HVV4_HvCalibration(
+            m_mapCalibrationP.put( strIdentifier, new HVV4_HvCalibration(
                                 GetAMSRoot() + File.separator +
                                 "etc" + File.separator +
                                 "calibration" + File.separator +
-                                "HVV4.HV." + strIdentifier + ".calib.xml"));
+                                "HVV4.HV." + strIdentifier + ".calib.xml", "CalibrationP"));
+            
+            m_mapCalibrationI.put( strIdentifier, new HVV4_HvCalibration(
+                                GetAMSRoot() + File.separator +
+                                "etc" + File.separator +
+                                "calibration" + File.separator +
+                                "HVV4.HV." + strIdentifier + ".calib.xml", "CalibrationI"));
+            
+            m_mapCalibrationU.put( strIdentifier, new HVV4_HvCalibration(
+                                GetAMSRoot() + File.separator +
+                                "etc" + File.separator +
+                                "calibration" + File.separator +
+                                "HVV4.HV." + strIdentifier + ".calib.xml", "CalibrationU"));
+            
             m_mapSerials.put( strIdentifier, serialPort);
             m_mapSerialListeners.put( strIdentifier, evListener);
             m_mapCircleBuffers.put( strIdentifier, cBuffer);
@@ -203,7 +218,9 @@ public class HVV4_HvApp {
             m_mapProcessorsRunnables = null;
             m_mapProcessorsThreads = null;
             m_mapCommands = null;
-            m_mapCalibrations = null;
+            m_mapCalibrationP = null;
+            m_mapCalibrationI = null;
+            m_mapCalibrationU = null;
             return;
         }
         
@@ -218,7 +235,9 @@ public class HVV4_HvApp {
         m_mapProcessorsRunnables = new TreeMap();
         m_mapProcessorsThreads = new TreeMap();
         m_mapCommands = new TreeMap();
-        m_mapCalibrations = new TreeMap();
+        m_mapCalibrationP = new TreeMap();
+        m_mapCalibrationI = new TreeMap();
+        m_mapCalibrationU = new TreeMap();
     }
     
     public void start() {
@@ -268,6 +287,140 @@ public class HVV4_HvApp {
         });
         
     }
+    
+    /*
+    public int GetPcCodeForI( String strId, int nDesiredCurrent) {
+        if( m_mapCalibrationP == null)
+            return 0;
+        
+        HVV4_HvCalibration pCalib = ( HVV4_HvCalibration) m_mapCalibrationP.get( strId);
+        if( pCalib == null || pCalib.m_pCalibration.size() < 2)
+            return 0;
+        
+        Set set = pCalib.m_pCalibration.entrySet();
+        Iterator it;
+        
+        int nCode1, nCode2;
+        int nCurr1, nCurr2;
+        
+        it = set.iterator(); 
+        
+        Map.Entry entry = (Map.Entry) it.next();
+        nCode1 = ( int) entry.getKey();
+        nCurr1 = ( int) entry.getValue();
+        
+        entry = (Map.Entry) it.next();
+        nCode2 = ( int) entry.getKey();
+        nCurr2 = ( int) entry.getValue();
+
+        if( nDesiredCurrent > nCurr2) {
+            while( it.hasNext()) {        
+                entry = (Map.Entry) it.next();
+                nCode1 = nCode2;
+                nCurr1 = nCurr2;
+                nCode2 = ( int) entry.getKey();
+                nCurr2 = ( int) entry.getValue();
+                if( nDesiredCurrent <= nCurr2) break;
+            }
+        }
+        
+        double k = ( ( double) ( nCode2 - nCode1)) / ( ( double) ( nCurr2 - nCurr1));
+        int nResult = nCode1 + ( int) ( k * ( nDesiredCurrent - nCurr1));
+        
+        logger.debug( String.format("CODE1=%d\tCODE2=%d", nCode1, nCode2));
+        logger.debug( String.format("CURR1=%d\tCURR2=%d", nCurr1, nCurr2));
+        logger.debug( String.format("DSRDI=%d\tRESLT=%d", nDesiredCurrent, nResult));
+        
+        return nResult;
+    }
+    
+    public int GetIForMgCode( String strId, int nMgCode) {
+        if( m_mapCalibrationI == null)
+            return 0;
+        
+        HVV4_HvCalibration pCalib = ( HVV4_HvCalibration) m_mapCalibrationI.get( strId);
+        if( pCalib == null || pCalib.m_pCalibration.size() < 2)
+            return 0;
+        
+        Set set = pCalib.m_pCalibration.entrySet();
+        Iterator it;
+        
+        int nCode1, nCode2;
+        int nCurr1, nCurr2;
+        
+        it = set.iterator(); 
+        
+        Map.Entry entry = (Map.Entry) it.next();
+        nCode1 = ( int) entry.getKey();
+        nCurr1 = ( int) entry.getValue();
+                
+        entry = (Map.Entry) it.next();
+        nCode2 = ( int) entry.getKey();
+        nCurr2 = ( int) entry.getValue();
+        
+        if( nMgCode > nCode2) {
+            while( it.hasNext()) {        
+                entry = (Map.Entry) it.next();
+                nCode1 = nCode2;
+                nCurr1 = nCurr2;
+                nCode2 = ( int) entry.getKey();
+                nCurr2 = ( int) entry.getValue();
+                if( nMgCode <= nCode2) break;
+            }
+        }
+        
+        double k = ( ( double) ( nCurr2 - nCurr1)) / ( ( double) ( nCode2 - nCode1));
+        int nResult = nCurr1 + ( int) ( k * ( nMgCode - nCode1));
+        
+        logger.debug( String.format("CODE1=%d\tCODE2=%d", nCode1, nCode2));
+        logger.debug( String.format("CURR1=%d\tCURR2=%d", nCurr1, nCurr2));
+        logger.debug( String.format("CODE =%d\tRESLT=%d", nMgCode, nResult));
+        return nResult;
+    }
+    
+    public int GetUForMgCode( String strId, int nMgCode) {
+        if( m_mapCalibrationU == null)
+            return 0;
+        
+        HVV4_HvCalibration pCalib = ( HVV4_HvCalibration) m_mapCalibrationU.get( strId);
+        if( pCalib == null || pCalib.m_pCalibration.size() < 2)
+            return 0;
+        
+        Set set = pCalib.m_pCalibration.entrySet();
+        Iterator it;
+        
+        int nCode1, nCode2;
+        int nVolt1, nVolt2;
+        
+        it = set.iterator(); 
+       
+        Map.Entry entry = (Map.Entry) it.next();
+        nCode1 = ( int) entry.getKey();
+        nVolt1 = ( int) entry.getValue();
+                
+        entry = (Map.Entry) it.next();
+        nCode2 = ( int) entry.getKey();
+        nVolt2 = ( int) entry.getValue();
+        
+        if( nMgCode > nCode2) {
+            while( it.hasNext()) {        
+                entry = (Map.Entry) it.next();
+                nCode1 = nCode2;
+                nVolt1 = nVolt2;
+                nCode2 = ( int) entry.getKey();
+                nVolt2 = ( int) entry.getValue();
+                if( nMgCode <= nCode2) break;
+            }
+        }
+        
+        double k = ( ( double) ( nVolt2 - nVolt1)) / ( ( double) ( nCode2 - nCode1));
+        int nResult = nVolt1 + ( int) ( k * ( nMgCode - nCode1));
+        
+        logger.debug( String.format("CODE1=%d\tCODE2=%d", nCode1, nCode2));
+        logger.debug( String.format("VOLT1=%d\tVOLT2=%d", nVolt1, nVolt2));
+        logger.debug( String.format("CODE =%d\tRESLT=%d", nMgCode, nResult));
+        return nResult;
+    }*/
     
     /**
      * @param args the command line arguments

@@ -100,10 +100,15 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
                                 int nUval = ( nB2 << 8) + nB3;
                                 int nIval = ( nB0 << 8) + nB1;
                                 
-                                HVV4_HvCalibration calib = ( HVV4_HvCalibration) theApp.m_mapCalibrations.get( m_strIdentifier);
-                                if( calib != null && calib.isReady() && theApp.GetSettings().GetUseCalibFromMg()) {
-                                    theApp.m_mapU.put( m_strIdentifier, calib.GetVoltageForMgCode( nUval));
-                                    theApp.m_mapI.put( m_strIdentifier, calib.GetCurrentForMgCode( nIval));
+                                if( theApp.GetSettings().GetUseCalibFromMg()) {
+                                    if( theApp.m_mapCalibrationI != null) {
+                                        HVV4_HvCalibration calib = ( HVV4_HvCalibration) theApp.m_mapCalibrationI.get( m_strIdentifier);
+                                        theApp.m_mapI.put( m_strIdentifier, calib.GetValForCode( nIval));
+                                    }
+                                    if( theApp.m_mapCalibrationU != null) {
+                                        HVV4_HvCalibration calib = ( HVV4_HvCalibration) theApp.m_mapCalibrationU.get( m_strIdentifier);
+                                        theApp.m_mapU.put( m_strIdentifier, calib.GetValForCode( nUval));
+                                    }                                    
                                 }
                                 else {
                                     theApp.m_mapU.put( m_strIdentifier, nUval);
