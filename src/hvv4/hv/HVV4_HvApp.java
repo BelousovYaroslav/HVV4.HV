@@ -149,7 +149,11 @@ public class HVV4_HvApp {
             //создаём объект очереди исходящих команд для этого канала связи
             ConcurrentLinkedQueue q = new ConcurrentLinkedQueue();
 
-            m_mapCalibrations.put( strIdentifier, new HVV4_HvCalibration( GetAMSRoot() + "/etc/HVV4.HV." + strIdentifier + ".calib.xml"));
+            m_mapCalibrations.put( strIdentifier, new HVV4_HvCalibration(
+                                GetAMSRoot() + File.separator +
+                                "etc" + File.separator +
+                                "calibration" + File.separator +
+                                "HVV4.HV." + strIdentifier + ".calib.xml"));
             m_mapSerials.put( strIdentifier, serialPort);
             m_mapSerialListeners.put( strIdentifier, evListener);
             m_mapCircleBuffers.put( strIdentifier, cBuffer);
@@ -266,7 +270,10 @@ public class HVV4_HvApp {
         }
         
         //настройка логгера
-        String strlog4jPropertiesFile = strAMSrootEnvVar + "/etc/log4j.hvv4.hv.properties";
+        String strlog4jPropertiesFile = strAMSrootEnvVar + File.separator +
+                                            "etc" + File.separator + 
+                                            "log4j" + File.separator +
+                                            "log4j.hvv4.hv.properties";
         File file = new File( strlog4jPropertiesFile);
         if(!file.exists())
             System.out.println("It is not possible to load the given log4j properties file :" + file.getAbsolutePath());
