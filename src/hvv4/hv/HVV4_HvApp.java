@@ -169,19 +169,19 @@ public class HVV4_HvApp {
                                 GetAMSRoot() + File.separator +
                                 "etc" + File.separator +
                                 "calibration" + File.separator +
-                                "HVV4.HV." + strIdentifier + ".calib.xml", "CalibrationP"));
+                                "HVV4.HV." + strIdentifier + ".calib.P.xml", "CalibrationP"));
             
             m_mapCalibrationI.put( strIdentifier, new HVV4_HvCalibration(
                                 GetAMSRoot() + File.separator +
                                 "etc" + File.separator +
                                 "calibration" + File.separator +
-                                "HVV4.HV." + strIdentifier + ".calib.xml", "CalibrationI"));
+                                "HVV4.HV." + strIdentifier + ".calib.I.xml", "CalibrationI"));
             
             m_mapCalibrationU.put( strIdentifier, new HVV4_HvCalibration(
                                 GetAMSRoot() + File.separator +
                                 "etc" + File.separator +
                                 "calibration" + File.separator +
-                                "HVV4.HV." + strIdentifier + ".calib.xml", "CalibrationU"));
+                                "HVV4.HV." + strIdentifier + ".calib.U.xml", "CalibrationU"));
             
             m_mapSerials.put( strIdentifier, serialPort);
             m_mapSerialListeners.put( strIdentifier, evListener);
