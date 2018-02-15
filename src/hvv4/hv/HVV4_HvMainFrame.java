@@ -103,13 +103,13 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                         case "4T": if( rad4TOn.isSelected()) bApply = true; break;
                     }
                     
-                    nApplyCode = value;
-                    if( theApp.GetSettings().GetUseCalibToMg() && theApp.m_mapCalibrationP != null) {
-                        HVV4_HvCalibration calib = ( HVV4_HvCalibration) theApp.m_mapCalibrationP.get( strId);
-                        nApplyCode = calib.GetValForCode( nApplyCode);
-                    }
-                    
                     if( bApply) {
+                        nApplyCode = value;
+                        if( theApp.GetSettings().GetUseCalibToMg() && theApp.m_mapCalibrationP != null) {
+                            HVV4_HvCalibration calib = ( HVV4_HvCalibration) theApp.m_mapCalibrationP.get( strId);
+                            nApplyCode = calib.GetValForCode( nApplyCode);
+                        }
+                    
                         byte aBytes[] = new byte[3];
                         aBytes[0] = 0x01;
                         aBytes[1] = ( byte) ( nApplyCode & 0xFF);
@@ -1140,22 +1140,19 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_lblEmergencyOffMouseClicked
 
     private void btnPresetApplyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPresetApplyActionPerformed
-        if( edtPreset.hasFocus()) {
-            String strEdt = edtPreset.getText();
-            int value;
-            try {
-                value = Integer.parseInt(strEdt);
-                if( value < 0) value = 0;
-                if( value > sldPreset.getMaximum()) value = sldPreset.getMaximum();
-                sldPreset.setValue( value);
-                edtPreset.setText( "" + value);
-                tApplyPreset.restart();
-            } catch (NumberFormatException nfe) {
-                logger.warn( nfe);
-                return;
-            }
-            //return;
-        }
+        String strEdt = edtPreset.getText();
+        int value;
+        try {
+            value = Integer.parseInt(strEdt);
+            if( value < 0) value = 0;
+            if( value > sldPreset.getMaximum()) value = sldPreset.getMaximum();
+            sldPreset.setValue( value);
+            edtPreset.setText( "" + value);
+            tApplyPreset.restart();
+        } catch (NumberFormatException nfe) {
+            logger.warn( nfe);
+            return;
+        }        
         
         /*
         Set set = theApp.m_mapSerials.entrySet();
