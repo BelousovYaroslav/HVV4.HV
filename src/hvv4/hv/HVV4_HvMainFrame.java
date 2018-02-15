@@ -48,10 +48,10 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         
         String strOS = System.getProperty("os.name");
         logger.info( "OS:" + strOS);
-        if( strOS.contains("win")) {
+        if( strOS.contains("inu")) {
             //setResizable( true);
             Dimension d = getSize();
-            d.height += 50;
+            d.height -= 40;
             setSize( d);
             //setResizable( false);
         }
@@ -473,9 +473,13 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         btn1T = new javax.swing.JButton();
         btn2T = new javax.swing.JButton();
         btn3T = new javax.swing.JButton();
+        btnPreset1000 = new javax.swing.JButton();
+        btnPreset1100 = new javax.swing.JButton();
+        btnPreset1200 = new javax.swing.JButton();
+        btnPreset1500 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(580, 540));
+        setPreferredSize(new java.awt.Dimension(580, 530));
         setResizable(false);
         addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
@@ -546,7 +550,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnPresetApply);
-        btnPresetApply.setBounds(10, 90, 310, 40);
+        btnPresetApply.setBounds(10, 80, 170, 20);
 
         btnTurnOff.setText("Снять");
         btnTurnOff.addActionListener(new java.awt.event.ActionListener() {
@@ -555,12 +559,12 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnTurnOff);
-        btnTurnOff.setBounds(420, 90, 150, 40);
+        btnTurnOff.setBounds(470, 80, 100, 20);
 
         btnGroup1A.add(rad1AOn);
         rad1AOn.setText("Вкл.");
         getContentPane().add(rad1AOn);
-        rad1AOn.setBounds(60, 130, 70, 20);
+        rad1AOn.setBounds(60, 110, 70, 20);
 
         btnGroup1A.add(rad1AOff);
         rad1AOff.setSelected(true);
@@ -571,17 +575,17 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad1AOff);
-        rad1AOff.setBounds(60, 150, 70, 20);
+        rad1AOff.setBounds(60, 130, 70, 20);
 
         btnGroup1A.add(rad1AStay);
         rad1AStay.setText("Ост.");
         getContentPane().add(rad1AStay);
-        rad1AStay.setBounds(60, 170, 70, 20);
+        rad1AStay.setBounds(60, 150, 70, 20);
 
         btnGroup2A.add(rad2AOn);
         rad2AOn.setText("Вкл.");
         getContentPane().add(rad2AOn);
-        rad2AOn.setBounds(190, 130, 70, 20);
+        rad2AOn.setBounds(190, 110, 70, 20);
 
         btnGroup2A.add(rad2AOff);
         rad2AOff.setSelected(true);
@@ -592,17 +596,17 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad2AOff);
-        rad2AOff.setBounds(190, 150, 70, 20);
+        rad2AOff.setBounds(190, 130, 70, 20);
 
         btnGroup2A.add(rad2AStay);
         rad2AStay.setText("Ост.");
         getContentPane().add(rad2AStay);
-        rad2AStay.setBounds(190, 170, 70, 20);
+        rad2AStay.setBounds(190, 150, 70, 20);
 
         btnGroup3A.add(rad3AOn);
         rad3AOn.setText("Вкл.");
         getContentPane().add(rad3AOn);
-        rad3AOn.setBounds(320, 130, 70, 20);
+        rad3AOn.setBounds(320, 110, 70, 20);
 
         btnGroup3A.add(rad3AOff);
         rad3AOff.setSelected(true);
@@ -613,17 +617,17 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad3AOff);
-        rad3AOff.setBounds(320, 150, 70, 20);
+        rad3AOff.setBounds(320, 130, 70, 20);
 
         btnGroup3A.add(rad3AStay);
         rad3AStay.setText("Ост.");
         getContentPane().add(rad3AStay);
-        rad3AStay.setBounds(320, 170, 70, 20);
+        rad3AStay.setBounds(320, 150, 70, 20);
 
         btnGroup4A.add(rad4AOn);
         rad4AOn.setText("Вкл.");
         getContentPane().add(rad4AOn);
-        rad4AOn.setBounds(450, 130, 70, 20);
+        rad4AOn.setBounds(450, 110, 70, 20);
 
         btnGroup4A.add(rad4AOff);
         rad4AOff.setSelected(true);
@@ -634,81 +638,81 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad4AOff);
-        rad4AOff.setBounds(450, 150, 70, 20);
+        rad4AOff.setBounds(450, 130, 70, 20);
 
         btnGroup4A.add(rad4AStay);
         rad4AStay.setText("Ост.");
         getContentPane().add(rad4AStay);
-        rad4AStay.setBounds(450, 170, 70, 20);
+        rad4AStay.setBounds(450, 150, 70, 20);
 
         lblVoltageATitle.setText("U, В");
         getContentPane().add(lblVoltageATitle);
-        lblVoltageATitle.setBounds(10, 190, 50, 50);
+        lblVoltageATitle.setBounds(10, 170, 50, 50);
 
         lblU1A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblU1A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU1A.setText("1000");
         lblU1A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU1A);
-        lblU1A.setBounds(60, 190, 120, 50);
+        lblU1A.setBounds(60, 170, 120, 50);
 
         lblU2A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblU2A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU2A.setText("1000");
         lblU2A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU2A);
-        lblU2A.setBounds(190, 190, 120, 50);
+        lblU2A.setBounds(190, 170, 120, 50);
 
         lblU3A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblU3A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU3A.setText("1000");
         lblU3A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU3A);
-        lblU3A.setBounds(320, 190, 120, 50);
+        lblU3A.setBounds(320, 170, 120, 50);
 
         lblU4A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblU4A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU4A.setText("1000");
         lblU4A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU4A);
-        lblU4A.setBounds(450, 190, 120, 50);
+        lblU4A.setBounds(450, 170, 120, 50);
 
         lblCurrentATitle.setText("I, мкА");
         getContentPane().add(lblCurrentATitle);
-        lblCurrentATitle.setBounds(10, 240, 50, 50);
+        lblCurrentATitle.setBounds(10, 220, 50, 50);
 
         lblI1A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblI1A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI1A.setText("1000");
         lblI1A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI1A);
-        lblI1A.setBounds(60, 240, 120, 50);
+        lblI1A.setBounds(60, 220, 120, 50);
 
         lblI2A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblI2A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI2A.setText("1000");
         lblI2A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI2A);
-        lblI2A.setBounds(190, 240, 120, 50);
+        lblI2A.setBounds(190, 220, 120, 50);
 
         lblI3A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblI3A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI3A.setText("1000");
         lblI3A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI3A);
-        lblI3A.setBounds(320, 240, 120, 50);
+        lblI3A.setBounds(320, 220, 120, 50);
 
         lblI4A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblI4A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI4A.setText("1000");
         lblI4A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI4A);
-        lblI4A.setBounds(450, 240, 120, 50);
+        lblI4A.setBounds(450, 220, 120, 50);
 
         btnGroup1T.add(rad1TOn);
         rad1TOn.setText("Вкл.");
         getContentPane().add(rad1TOn);
-        rad1TOn.setBounds(60, 320, 70, 20);
+        rad1TOn.setBounds(60, 280, 70, 20);
 
         btnGroup1T.add(rad1TOff);
         rad1TOff.setSelected(true);
@@ -719,17 +723,17 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad1TOff);
-        rad1TOff.setBounds(60, 340, 70, 20);
+        rad1TOff.setBounds(60, 300, 70, 20);
 
         btnGroup1T.add(rad1TStay);
         rad1TStay.setText("Ост.");
         getContentPane().add(rad1TStay);
-        rad1TStay.setBounds(60, 360, 70, 20);
+        rad1TStay.setBounds(60, 320, 70, 20);
 
         btnGroup2T.add(rad2TOn);
         rad2TOn.setText("Вкл.");
         getContentPane().add(rad2TOn);
-        rad2TOn.setBounds(190, 320, 70, 20);
+        rad2TOn.setBounds(190, 280, 70, 20);
 
         btnGroup2T.add(rad2TOff);
         rad2TOff.setSelected(true);
@@ -740,17 +744,17 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad2TOff);
-        rad2TOff.setBounds(190, 340, 70, 20);
+        rad2TOff.setBounds(190, 300, 70, 20);
 
         btnGroup2T.add(rad2TStay);
         rad2TStay.setText("Ост.");
         getContentPane().add(rad2TStay);
-        rad2TStay.setBounds(190, 360, 70, 20);
+        rad2TStay.setBounds(190, 320, 70, 20);
 
         btnGroup3T.add(rad3TOn);
         rad3TOn.setText("Вкл.");
         getContentPane().add(rad3TOn);
-        rad3TOn.setBounds(320, 320, 70, 20);
+        rad3TOn.setBounds(320, 280, 70, 20);
 
         btnGroup3T.add(rad3TOff);
         rad3TOff.setSelected(true);
@@ -761,17 +765,17 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad3TOff);
-        rad3TOff.setBounds(320, 340, 70, 20);
+        rad3TOff.setBounds(320, 300, 70, 20);
 
         btnGroup3T.add(rad3TStay);
         rad3TStay.setText("Ост.");
         getContentPane().add(rad3TStay);
-        rad3TStay.setBounds(320, 360, 70, 20);
+        rad3TStay.setBounds(320, 320, 70, 20);
 
         btnGroup4T.add(rad4TOn);
         rad4TOn.setText("Вкл.");
         getContentPane().add(rad4TOn);
-        rad4TOn.setBounds(450, 320, 70, 20);
+        rad4TOn.setBounds(450, 280, 70, 20);
 
         btnGroup4T.add(rad4TOff);
         rad4TOff.setSelected(true);
@@ -782,76 +786,76 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad4TOff);
-        rad4TOff.setBounds(450, 340, 70, 20);
+        rad4TOff.setBounds(450, 300, 70, 20);
 
         btnGroup4T.add(rad4TStay);
         rad4TStay.setText("Ост.");
         getContentPane().add(rad4TStay);
-        rad4TStay.setBounds(450, 360, 70, 20);
+        rad4TStay.setBounds(450, 320, 70, 20);
 
         lblVoltageTTitle.setText("U, В");
         getContentPane().add(lblVoltageTTitle);
-        lblVoltageTTitle.setBounds(10, 380, 50, 50);
+        lblVoltageTTitle.setBounds(10, 340, 50, 50);
 
         lblU1T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblU1T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU1T.setText("1000");
         lblU1T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU1T);
-        lblU1T.setBounds(60, 380, 120, 50);
+        lblU1T.setBounds(60, 340, 120, 50);
 
         lblU2T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblU2T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU2T.setText("1000");
         lblU2T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU2T);
-        lblU2T.setBounds(190, 380, 120, 50);
+        lblU2T.setBounds(190, 340, 120, 50);
 
         lblU3T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblU3T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU3T.setText("1000");
         lblU3T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU3T);
-        lblU3T.setBounds(320, 380, 120, 50);
+        lblU3T.setBounds(320, 340, 120, 50);
 
         lblU4T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblU4T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU4T.setText("1000");
         lblU4T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU4T);
-        lblU4T.setBounds(450, 380, 120, 50);
+        lblU4T.setBounds(450, 340, 120, 50);
 
         lblCurrentTTitle.setText("I, мкА");
         getContentPane().add(lblCurrentTTitle);
-        lblCurrentTTitle.setBounds(10, 430, 50, 50);
+        lblCurrentTTitle.setBounds(10, 390, 50, 50);
 
         lblI1T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblI1T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI1T.setText("1000");
         lblI1T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI1T);
-        lblI1T.setBounds(60, 430, 120, 50);
+        lblI1T.setBounds(60, 390, 120, 50);
 
         lblI2T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblI2T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI2T.setText("1000");
         lblI2T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI2T);
-        lblI2T.setBounds(190, 430, 120, 50);
+        lblI2T.setBounds(190, 390, 120, 50);
 
         lblI3T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblI3T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI3T.setText("1000");
         lblI3T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI3T);
-        lblI3T.setBounds(320, 430, 120, 50);
+        lblI3T.setBounds(320, 390, 120, 50);
 
         lblI4T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblI4T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI4T.setText("1000");
         lblI4T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI4T);
-        lblI4T.setBounds(450, 430, 120, 50);
+        lblI4T.setBounds(450, 390, 120, 50);
 
         tglBtnLockScreen.setText("Заблокировать экран");
         tglBtnLockScreen.addActionListener(new java.awt.event.ActionListener() {
@@ -860,7 +864,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(tglBtnLockScreen);
-        tglBtnLockScreen.setBounds(10, 490, 200, 40);
+        tglBtnLockScreen.setBounds(10, 450, 200, 40);
 
         lblEmergencyOff.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblEmergencyOff.setText("<html>АВАРИЙНОЕ ВЫКЛЮЧЕНИЕ<br>ТРОЙНОЙ КЛИК СЮДА!</html>");
@@ -872,7 +876,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(lblEmergencyOff);
-        lblEmergencyOff.setBounds(220, 490, 200, 40);
+        lblEmergencyOff.setBounds(220, 450, 200, 40);
 
         btnExit.setText("Выход");
         btnExit.addActionListener(new java.awt.event.ActionListener() {
@@ -881,7 +885,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnExit);
-        btnExit.setBounds(430, 490, 140, 40);
+        btnExit.setBounds(430, 450, 140, 40);
 
         btn1A.setText("1A");
         btn1A.addActionListener(new java.awt.event.ActionListener() {
@@ -890,7 +894,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btn1A);
-        btn1A.setBounds(130, 135, 50, 50);
+        btn1A.setBounds(130, 115, 50, 50);
 
         btn2A.setText("2A");
         btn2A.addActionListener(new java.awt.event.ActionListener() {
@@ -899,7 +903,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btn2A);
-        btn2A.setBounds(260, 135, 50, 50);
+        btn2A.setBounds(260, 115, 50, 50);
 
         btn3A.setText("3A");
         btn3A.addActionListener(new java.awt.event.ActionListener() {
@@ -908,7 +912,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btn3A);
-        btn3A.setBounds(390, 135, 50, 50);
+        btn3A.setBounds(390, 115, 50, 50);
 
         btn4A.setText("4A");
         btn4A.addActionListener(new java.awt.event.ActionListener() {
@@ -917,7 +921,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btn4A);
-        btn4A.setBounds(520, 135, 50, 50);
+        btn4A.setBounds(520, 115, 50, 50);
 
         btn4T.setText("4Ш");
         btn4T.addActionListener(new java.awt.event.ActionListener() {
@@ -926,7 +930,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btn4T);
-        btn4T.setBounds(520, 325, 50, 50);
+        btn4T.setBounds(520, 285, 50, 50);
 
         btn1T.setText("1Ш");
         btn1T.addActionListener(new java.awt.event.ActionListener() {
@@ -935,7 +939,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btn1T);
-        btn1T.setBounds(130, 325, 50, 50);
+        btn1T.setBounds(130, 285, 50, 50);
 
         btn2T.setText("2Ш");
         btn2T.addActionListener(new java.awt.event.ActionListener() {
@@ -944,7 +948,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btn2T);
-        btn2T.setBounds(260, 325, 50, 50);
+        btn2T.setBounds(260, 285, 50, 50);
 
         btn3T.setText("3Ш");
         btn3T.addActionListener(new java.awt.event.ActionListener() {
@@ -953,7 +957,47 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btn3T);
-        btn3T.setBounds(390, 325, 50, 50);
+        btn3T.setBounds(390, 285, 50, 50);
+
+        btnPreset1000.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        btnPreset1000.setText("1000");
+        btnPreset1000.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPreset1000ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnPreset1000);
+        btnPreset1000.setBounds(190, 80, 62, 20);
+
+        btnPreset1100.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        btnPreset1100.setText("1100");
+        btnPreset1100.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPreset1100ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnPreset1100);
+        btnPreset1100.setBounds(260, 80, 62, 20);
+
+        btnPreset1200.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        btnPreset1200.setText("1200");
+        btnPreset1200.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPreset1200ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnPreset1200);
+        btnPreset1200.setBounds(330, 80, 62, 20);
+
+        btnPreset1500.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        btnPreset1500.setText("1500");
+        btnPreset1500.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPreset1500ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnPreset1500);
+        btnPreset1500.setBounds(400, 80, 62, 20);
 
         pack();
         setLocationRelativeTo(null);
@@ -1332,6 +1376,50 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         tApplyPreset.restart();
     }//GEN-LAST:event_formMouseWheelMoved
 
+    private void btnPreset1500ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreset1500ActionPerformed
+        int value = 1500;
+        try {
+            sldPreset.setValue( value);
+            edtPreset.setText( "" + value);
+            tApplyPreset.restart();
+        } catch (NumberFormatException nfe) {
+            logger.warn( nfe);
+        }
+    }//GEN-LAST:event_btnPreset1500ActionPerformed
+
+    private void btnPreset1000ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreset1000ActionPerformed
+        int value = 1000;
+        try {
+            sldPreset.setValue( value);
+            edtPreset.setText( "" + value);
+            tApplyPreset.restart();
+        } catch (NumberFormatException nfe) {
+            logger.warn( nfe);
+        }
+    }//GEN-LAST:event_btnPreset1000ActionPerformed
+
+    private void btnPreset1100ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreset1100ActionPerformed
+        int value = 1100;
+        try {
+            sldPreset.setValue( value);
+            edtPreset.setText( "" + value);
+            tApplyPreset.restart();
+        } catch (NumberFormatException nfe) {
+            logger.warn( nfe);
+        }
+    }//GEN-LAST:event_btnPreset1100ActionPerformed
+
+    private void btnPreset1200ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreset1200ActionPerformed
+        int value = 1200;
+        try {
+            sldPreset.setValue( value);
+            edtPreset.setText( "" + value);
+            tApplyPreset.restart();
+        } catch (NumberFormatException nfe) {
+            logger.warn( nfe);
+        }
+    }//GEN-LAST:event_btnPreset1200ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1386,6 +1474,10 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     private javax.swing.ButtonGroup btnGroup3T;
     private javax.swing.ButtonGroup btnGroup4A;
     private javax.swing.ButtonGroup btnGroup4T;
+    private javax.swing.JButton btnPreset1000;
+    private javax.swing.JButton btnPreset1100;
+    private javax.swing.JButton btnPreset1200;
+    private javax.swing.JButton btnPreset1500;
     private javax.swing.JButton btnPresetApply;
     private javax.swing.JButton btnPresetDown;
     private javax.swing.JButton btnPresetUp;
