@@ -71,6 +71,15 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
             HVV4_HV_CircleBuffer cBuffer = ( HVV4_HV_CircleBuffer) theApp.m_mapCircleBuffers.get( m_strIdentifier);
             if( cBuffer == null) {
                 logger.warn( m_strIdentifier + " CBUFFER = NULL");
+                try {
+                    Thread.sleep( 50);
+                }
+                catch( InterruptedException e) {
+                    logger.error( "CBUFFER=NULL waiting", e);
+                    m_bStopThread = true;
+                    m_bRunning = false;
+                    return;
+                }
                 continue;
             }
             int nLen = cBuffer.getReadyIncomingDataLen();
