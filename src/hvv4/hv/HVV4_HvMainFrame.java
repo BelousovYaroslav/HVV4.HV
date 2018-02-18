@@ -1272,15 +1272,15 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             theApp.m_mapCalibrationP.put( strIdentifier, new HVV4_HvCalibration(
                             theApp.GetAMSRoot() + File.separator +
                             "etc" + File.separator +
-                            "HVV4.HV." + strIdentifier + ".calib.xml", "CalibrationP"));
+                            "HVV4.HV." + strIdentifier + ".calib.P.xml", "CalibrationP"));
             theApp.m_mapCalibrationI.put( strIdentifier, new HVV4_HvCalibration(
                             theApp.GetAMSRoot() + File.separator +
                             "etc" + File.separator +
-                            "HVV4.HV." + strIdentifier + ".calib.xml", "CalibrationI"));
+                            "HVV4.HV." + strIdentifier + ".calib.I.xml", "CalibrationI"));
             theApp.m_mapCalibrationU.put( strIdentifier, new HVV4_HvCalibration(
                             theApp.GetAMSRoot() + File.separator +
                             "etc" + File.separator +
-                            "HVV4.HV." + strIdentifier + ".calib.xml", "CalibrationU"));
+                            "HVV4.HV." + strIdentifier + ".calib.U.xml", "CalibrationU"));
             theApp.m_mapSerials.put( strIdentifier, serialPort);
             theApp.m_mapSerialListeners.put( strIdentifier, evListener);
             theApp.m_mapCircleBuffers.put( strIdentifier, cBuffer);
