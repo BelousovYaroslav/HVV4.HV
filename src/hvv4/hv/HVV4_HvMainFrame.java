@@ -48,16 +48,24 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         
         String strOS = System.getProperty("os.name");
         logger.info( "OS:" + strOS);
-        if( strOS.contains("inu")) {
+        if( strOS.contains("win")) {
             //setResizable( true);
             Dimension d = getSize();
-            d.height -= 40;
+            d.height += 40;
             setSize( d);
             //setResizable( false);
         }
         
         theApp = app;
         
+        if( theApp.GetSettings().GetUseCalibToMg()) {
+            lblSetCurrentTitle.setText( "Уставка выходного тока, мкА:");
+            sldPreset.setMaximum( 5000);
+        }
+        else {
+            lblSetCurrentTitle.setText( "Уставка выходного тока, код:");
+            sldPreset.setMaximum( 32767);
+        }
         btnPresetUp.setIcon( theApp.GetResources().getIconUp());
         btnPresetDown.setIcon( theApp.GetResources().getIconTriaDown());
         
@@ -107,7 +115,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                         nApplyCode = value;
                         if( theApp.GetSettings().GetUseCalibToMg() && theApp.m_mapCalibrationP != null) {
                             HVV4_HvCalibration calib = ( HVV4_HvCalibration) theApp.m_mapCalibrationP.get( strId);
-                            nApplyCode = calib.GetValForCode( nApplyCode);
+                            nApplyCode = calib.GetCodeForVal( nApplyCode);
                         }
                     
                         byte aBytes[] = new byte[3];
@@ -231,6 +239,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 btnPresetApply.setEnabled(  !tglBtnLockScreen.isSelected());
                 btnTurnOff.setEnabled(      !tglBtnLockScreen.isSelected());
   
+                btnPreset1000.setEnabled(   !tglBtnLockScreen.isSelected());
+                btnPreset1100.setEnabled(   !tglBtnLockScreen.isSelected());
+                btnPreset1200.setEnabled(   !tglBtnLockScreen.isSelected());
+                btnPreset1500.setEnabled(   !tglBtnLockScreen.isSelected());
+                
                 btn1A.setEnabled(           !tglBtnLockScreen.isSelected());
                 rad1AOff.setEnabled(        !tglBtnLockScreen.isSelected());
                 rad1AOn.setEnabled(         !tglBtnLockScreen.isSelected());
@@ -479,7 +492,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         btnPreset1500 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(580, 530));
+        setPreferredSize(new java.awt.Dimension(580, 500));
         setResizable(false);
         addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
@@ -1157,10 +1170,14 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         tEmergencyOffClicksDrop.restart();
         if( m_nEmergencyOffClicks == 3) {
             lblEmergencyOff.setBackground( new Color( 0, 250, 0));
-            rad1AOff.doClick(); rad1TOff.doClick();
-            rad2AOff.doClick(); rad2TOff.doClick();
-            rad3AOff.doClick(); rad3TOff.doClick();
-            rad4AOff.doClick(); rad4TOff.doClick();
+            rad1AOff.setEnabled( true); rad1AOff.doClick();
+            rad1TOff.setEnabled( true); rad1TOff.doClick();
+            rad2AOff.setEnabled( true); rad2AOff.doClick();
+            rad2TOff.setEnabled( true); rad2TOff.doClick();
+            rad3AOff.setEnabled( true); rad3AOff.doClick();
+            rad3TOff.setEnabled( true); rad3TOff.doClick();
+            rad4AOff.setEnabled( true); rad4AOff.doClick();
+            rad4TOff.setEnabled( true); rad4TOff.doClick();
             tEmergencyOffClicksDrop.stop();
         }
 

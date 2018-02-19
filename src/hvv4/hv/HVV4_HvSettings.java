@@ -80,6 +80,9 @@ public class HVV4_HvSettings {
     private boolean m_bUseCalibFromMg;
     public boolean GetUseCalibFromMg() { return m_bUseCalibFromMg;}
     
+    private int m_nWinDlgHeightAdd;
+    public int GetDialogHeightAddWin() { return m_nWinDlgHeightAdd;}
+    
     //RW SECTION
     
     
@@ -99,11 +102,15 @@ public class HVV4_HvSettings {
         m_bUseCalibToMg = false;
         m_bUseCalibFromMg = false;
         
+        m_nWinDlgHeightAdd = 40;
+        
         ReadSettings();
     }
     
     private boolean ReadSettings() {
         boolean bResOk = true;
+        
+        //R-SECTION
         try {
             SAXReader reader = new SAXReader();
             
@@ -128,7 +135,7 @@ public class HVV4_HvSettings {
                 if( "UseCalibToMg".equals( name))   if( "true".equals( value)) m_bUseCalibToMg = true;
                 
                 if( "singleInstancePort.HVV4_hv".equals( name)) m_nSingleInstanceSocketServerPort = Integer.parseInt( value);
-                
+                if( "heightAdd".equals( name)) m_nWinDlgHeightAdd = Integer.parseInt( value);
             }
             
         } catch( MalformedURLException ex) {
@@ -174,6 +181,7 @@ public class HVV4_HvSettings {
             bResOk = false;
         }
         
+        //RW-section
         if( bResOk) {
             try {
                 SAXReader reader = new SAXReader();
@@ -226,7 +234,9 @@ public class HVV4_HvSettings {
             OutputFormat format = OutputFormat.createPrettyPrint();
             
             //TODO
-            String strSettingsFilePathName = System.getenv( "AMS_ROOT") + "/etc/settings.poller.rw.xml";
+            String strSettingsFilePathName = System.getenv( "AMS_ROOT") + File.separator +
+                                                "etc" + File.separator +
+                                                "settings.hvv4_hv.rw.xml";
             
             XMLWriter writer = new XMLWriter( new FileWriter( strSettingsFilePathName), format);
             

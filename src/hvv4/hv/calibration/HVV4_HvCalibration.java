@@ -117,9 +117,49 @@ public class HVV4_HvCalibration {
         double k = ( ( double) ( nVolt2 - nVolt1)) / ( ( double) ( nCode2 - nCode1));
         int nResult = nVolt1 + ( int) ( k * ( nCode - nCode1));
         
-        logger.debug( String.format("CODE1=%d\t VAL1=%d", nCode1, nVolt1));
-        logger.debug( String.format("CODE2=%d\t VAL2=%d", nCode2, nVolt2));
-        logger.debug( String.format("ICODE=%d\tRESLT=%d", nCode,  nResult));
+        logger.debug( String.format("C>V: CODE1=%d\t VAL1=%d", nCode1, nVolt1));
+        logger.debug( String.format("C>V: CODE2=%d\t VAL2=%d", nCode2, nVolt2));
+        logger.debug( String.format("C>V: ICODE=%d\tRESLT=%d", nCode,  nResult));
+        return nResult;
+    }
+    
+    public int GetCodeForVal( int nVal) {
+        if( m_pCalibration == null || m_pCalibration.size() < 2)
+            return 0;
+        
+        Set set = m_pCalibration.entrySet();
+        Iterator it;
+        
+        int nCode1, nCode2;
+        int nVal1,  nVal2;
+        
+        it = set.iterator(); 
+       
+        Map.Entry entry = (Map.Entry) it.next();
+        nCode1 = ( int) entry.getKey();
+        nVal1  = ( int) entry.getValue();
+                
+        entry = (Map.Entry) it.next();
+        nCode2 = ( int) entry.getKey();
+        nVal2  = ( int) entry.getValue();
+        
+        if( nVal > nVal2) {
+            while( it.hasNext()) {        
+                entry = (Map.Entry) it.next();
+                nCode1 = nCode2;
+                nVal1  = nVal2;
+                nCode2 = ( int) entry.getKey();
+                nVal2 = ( int) entry.getValue();
+                if( nVal <= nVal2) break;
+            }
+        }
+        
+        double k = ( ( double) ( nCode2 - nCode1)) / ( ( double) ( nVal2 - nVal1));
+        int nResult = nCode1 + ( int) ( k * ( nVal - nVal1));
+        
+        logger.debug( String.format("V>C: CODE1=%d\t VAL1=%d", nCode1, nVal1));
+        logger.debug( String.format("V>C: CODE2=%d\t VAL2=%d", nCode2, nVal2));
+        logger.debug( String.format("V>C: IVAL=%d \t RESLT=%d",  nVal,  nResult));
         return nResult;
     }
 }
