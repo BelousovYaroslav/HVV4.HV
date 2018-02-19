@@ -46,17 +46,17 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     public HVV4_HvMainFrame( HVV4_HvApp app) {
         initComponents();
         
+        theApp = app;
+        
         String strOS = System.getProperty("os.name");
         logger.info( "OS:" + strOS);
-        if( strOS.contains("win")) {
+        if( strOS.contains("indows")) {
             //setResizable( true);
             Dimension d = getSize();
-            d.height += 40;
+            d.height += theApp.GetSettings().GetDialogHeightAddWin();
             setSize( d);
             //setResizable( false);
         }
-        
-        theApp = app;
         
         if( theApp.GetSettings().GetUseCalibToMg()) {
             lblSetCurrentTitle.setText( "Уставка выходного тока, мкА:");
@@ -1330,14 +1330,17 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             theApp.m_mapCalibrationP.put( strIdentifier, new HVV4_HvCalibration(
                             theApp.GetAMSRoot() + File.separator +
                             "etc" + File.separator +
-                            "HVV4.HV." + strIdentifier + ".calib.P.xml", "CalibrationP"));
+                            "calibration" + File.separator +
+                            "HVV4.HV." + strIdentifier + ".calib.P.xml", "CalibrationP"));                            
             theApp.m_mapCalibrationI.put( strIdentifier, new HVV4_HvCalibration(
                             theApp.GetAMSRoot() + File.separator +
                             "etc" + File.separator +
+                            "calibration" + File.separator +
                             "HVV4.HV." + strIdentifier + ".calib.I.xml", "CalibrationI"));
             theApp.m_mapCalibrationU.put( strIdentifier, new HVV4_HvCalibration(
                             theApp.GetAMSRoot() + File.separator +
                             "etc" + File.separator +
+                            "calibration" + File.separator +
                             "HVV4.HV." + strIdentifier + ".calib.U.xml", "CalibrationU"));
             theApp.m_mapSerials.put( strIdentifier, serialPort);
             theApp.m_mapSerialListeners.put( strIdentifier, evListener);
