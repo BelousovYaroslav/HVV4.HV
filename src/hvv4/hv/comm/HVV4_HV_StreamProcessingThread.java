@@ -162,7 +162,7 @@ public class HVV4_HV_StreamProcessingThread implements Runnable {
                     logger.warn( strMsg);
                             
                     if( nLen == 1) {
-                        if( bts[0] == 0xFE) {
+                        if( bts[0] == ( byte) 0xFE) {
                             logger.warn( m_strIdentifier + ": Мы не ждём ответа, однако отловлен одинокий странный 0xFE");
                         }
                         else {
