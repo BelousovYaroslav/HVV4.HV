@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import javax.swing.JLabel;
 import javax.swing.Timer;
 import jssc.SerialPort;
 import jssc.SerialPortException;
@@ -40,6 +41,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     
     int m_nEmergencyOffClicks;
     Timer tEmergencyOffClicksDrop;
+    
+    int m_nReconnectClicks;
+    String m_strReconnectElectrode;
+    Timer tReconnectClicksDrop;
+    
     /**
      * Creates new form HVV4HVMainFrame
      */
@@ -79,8 +85,32 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 lblEmergencyOff.setBackground( null);
             }
         });
+        
+        m_nReconnectClicks = 0;
+        m_strReconnectElectrode = null;
+        tReconnectClicksDrop = new Timer( 500, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                m_nReconnectClicks = 0;
+                tReconnectClicksDrop.stop();
+                if( m_strReconnectElectrode != null) {
+                    switch( m_strReconnectElectrode) {
+                        //case "1A": lbl1A.setBackground( null); break;
+                        case "1T": lbl1T.setBackground( null); break;
+                        //case "2A": lbl2A.setBackground( null); break;
+                        //case "2T": lbl2T.setBackground( null); break;
+                        //case "3A": lbl3A.setBackground( null); break;
+                        //case "3T": lbl3T.setBackground( null); break;
+                        //case "4A": lbl4A.setBackground( null); break;
+                        //case "4T": lbl4T.setBackground( null); break;
+                    }
+                }
                 
-        setTitle( "HVV4.Модуль управления  в\\в. (2018.02.02 13:00), (C) ФЛАВТ 2018.");
+            }
+        });
+                
+        setTitle( "HVV4.Модуль управления  в\\в. (2018.03.02 14:00), (C) ФЛАВТ 2018.");
         
         //таймер, отправляющий команды выставки уставки в контроллеры в/в модулей
         tApplyPreset = new Timer( 300, new ActionListener() {
@@ -239,41 +269,44 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 btnPresetApply.setEnabled(  !tglBtnLockScreen.isSelected());
                 btnTurnOff.setEnabled(      !tglBtnLockScreen.isSelected());
   
+                btnPreset500.setEnabled(   !tglBtnLockScreen.isSelected());
+                btnPreset600.setEnabled(   !tglBtnLockScreen.isSelected());
                 btnPreset1000.setEnabled(   !tglBtnLockScreen.isSelected());
                 btnPreset1100.setEnabled(   !tglBtnLockScreen.isSelected());
                 btnPreset1200.setEnabled(   !tglBtnLockScreen.isSelected());
-                btnPreset1500.setEnabled(   !tglBtnLockScreen.isSelected());
+                btnPreset2500.setEnabled(   !tglBtnLockScreen.isSelected());
+                btnPreset3500.setEnabled(   !tglBtnLockScreen.isSelected());
                 
-                btn1A.setEnabled(           !tglBtnLockScreen.isSelected());
+                //btn1A.setEnabled(           !tglBtnLockScreen.isSelected());
                 rad1AOff.setEnabled(        !tglBtnLockScreen.isSelected());
                 rad1AOn.setEnabled(         !tglBtnLockScreen.isSelected());
                 rad1AStay.setEnabled(       !tglBtnLockScreen.isSelected());
-                btn2A.setEnabled(           !tglBtnLockScreen.isSelected());
+                //btn2A.setEnabled(           !tglBtnLockScreen.isSelected());
                 rad2AOff.setEnabled(        !tglBtnLockScreen.isSelected());
                 rad2AOn.setEnabled(         !tglBtnLockScreen.isSelected());
                 rad2AStay.setEnabled(       !tglBtnLockScreen.isSelected());
-                btn3A.setEnabled(           !tglBtnLockScreen.isSelected());
+                //btn3A.setEnabled(           !tglBtnLockScreen.isSelected());
                 rad3AOff.setEnabled(        !tglBtnLockScreen.isSelected());
                 rad3AOn.setEnabled(         !tglBtnLockScreen.isSelected());
                 rad3AStay.setEnabled(       !tglBtnLockScreen.isSelected());
-                btn4A.setEnabled(           !tglBtnLockScreen.isSelected());
+                //btn4A.setEnabled(           !tglBtnLockScreen.isSelected());
                 rad4AOff.setEnabled(        !tglBtnLockScreen.isSelected());
                 rad4AOn.setEnabled(         !tglBtnLockScreen.isSelected());
                 rad4AStay.setEnabled(       !tglBtnLockScreen.isSelected());
 
-                btn1T.setEnabled(           !tglBtnLockScreen.isSelected());
+                //btn1T.setEnabled(           !tglBtnLockScreen.isSelected());
                 rad1TOff.setEnabled(        !tglBtnLockScreen.isSelected());
                 rad1TOn.setEnabled(         !tglBtnLockScreen.isSelected());
                 rad1TStay.setEnabled(       !tglBtnLockScreen.isSelected());
-                btn2T.setEnabled(           !tglBtnLockScreen.isSelected());
+                //btn2T.setEnabled(           !tglBtnLockScreen.isSelected());
                 rad2TOff.setEnabled(        !tglBtnLockScreen.isSelected());
                 rad2TOn.setEnabled(         !tglBtnLockScreen.isSelected());
                 rad2TStay.setEnabled(       !tglBtnLockScreen.isSelected());
-                btn3T.setEnabled(           !tglBtnLockScreen.isSelected());
+                //btn3T.setEnabled(           !tglBtnLockScreen.isSelected());
                 rad3TOff.setEnabled(        !tglBtnLockScreen.isSelected());
                 rad3TOn.setEnabled(         !tglBtnLockScreen.isSelected());
                 rad3TStay.setEnabled(       !tglBtnLockScreen.isSelected());
-                btn4T.setEnabled(           !tglBtnLockScreen.isSelected());
+                //btn4T.setEnabled(           !tglBtnLockScreen.isSelected());
                 rad4TOff.setEnabled(        !tglBtnLockScreen.isSelected());
                 rad4TOn.setEnabled(         !tglBtnLockScreen.isSelected());
                 rad4TStay.setEnabled(       !tglBtnLockScreen.isSelected());
@@ -293,7 +326,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
-                btn1A.setForeground( clr);
+                lbl1A.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "2A");
@@ -304,7 +337,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
-                btn2A.setForeground( clr);
+                lbl2A.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "3A");
@@ -315,7 +348,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
-                btn3A.setForeground( clr);
+                lbl3A.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "4A");
@@ -326,7 +359,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
-                btn4A.setForeground( clr);
+                lbl4A.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "1T");
@@ -337,7 +370,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
-                btn1T.setForeground( clr);
+                lbl1T.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "2T");
@@ -348,7 +381,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
-                btn2T.setForeground( clr);
+                lbl2T.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "3T");
@@ -359,7 +392,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
-                btn3T.setForeground( clr);
+                lbl3T.setForeground( clr);
                 
                 clr = null;
                 port = ( SerialPort) theApp.m_mapSerials.get( "4T");
@@ -370,7 +403,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
                 if( calibI == null || calibI.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( calibU == null || calibU.m_pCalibration.size() < 2) clr = Color.YELLOW;
                 if( port == null  || !port.isOpened())   clr = Color.RED;
-                btn4T.setForeground( clr);
+                lbl4T.setForeground( clr);
             }
         });
         tRefreshStates.start();
@@ -478,21 +511,24 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         tglBtnLockScreen = new javax.swing.JToggleButton();
         lblEmergencyOff = new javax.swing.JLabel();
         btnExit = new javax.swing.JButton();
-        btn1A = new javax.swing.JButton();
-        btn2A = new javax.swing.JButton();
-        btn3A = new javax.swing.JButton();
-        btn4A = new javax.swing.JButton();
-        btn4T = new javax.swing.JButton();
-        btn1T = new javax.swing.JButton();
-        btn2T = new javax.swing.JButton();
-        btn3T = new javax.swing.JButton();
+        btnPreset500 = new javax.swing.JButton();
+        btnPreset600 = new javax.swing.JButton();
         btnPreset1000 = new javax.swing.JButton();
         btnPreset1100 = new javax.swing.JButton();
+        lbl1T = new javax.swing.JLabel();
+        lbl2T = new javax.swing.JLabel();
+        lbl3T = new javax.swing.JLabel();
+        lbl4T = new javax.swing.JLabel();
+        lbl1A = new javax.swing.JLabel();
+        lbl3A = new javax.swing.JLabel();
+        lbl4A = new javax.swing.JLabel();
+        lbl2A = new javax.swing.JLabel();
         btnPreset1200 = new javax.swing.JButton();
-        btnPreset1500 = new javax.swing.JButton();
+        btnPreset2500 = new javax.swing.JButton();
+        btnPreset3500 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(580, 500));
+        setPreferredSize(new java.awt.Dimension(1070, 680));
         setResizable(false);
         addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
@@ -504,10 +540,10 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         lblSetCurrentTitle.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         lblSetCurrentTitle.setText("Уставка выходного тока, мкА:");
         getContentPane().add(lblSetCurrentTitle);
-        lblSetCurrentTitle.setBounds(10, 10, 460, 40);
+        lblSetCurrentTitle.setBounds(310, 10, 380, 40);
 
         edtPreset.setFont(new java.awt.Font("Dialog", 0, 32)); // NOI18N
-        edtPreset.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        edtPreset.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         edtPreset.setText("1000");
         edtPreset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -515,7 +551,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(edtPreset);
-        edtPreset.setBounds(410, 10, 110, 40);
+        edtPreset.setBounds(690, 5, 130, 50);
 
         btnPresetDown.setIcon(new javax.swing.ImageIcon("/home/yaroslav/HVV_HOME/res/images/down.gif")); // NOI18N
         btnPresetDown.addActionListener(new java.awt.event.ActionListener() {
@@ -524,7 +560,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnPresetDown);
-        btnPresetDown.setBounds(520, 30, 40, 20);
+        btnPresetDown.setBounds(820, 35, 40, 20);
 
         btnPresetUp.setIcon(new javax.swing.ImageIcon("/home/yaroslav/HVV_HOME/res/images/up.gif")); // NOI18N
         btnPresetUp.addActionListener(new java.awt.event.ActionListener() {
@@ -533,7 +569,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnPresetUp);
-        btnPresetUp.setBounds(520, 10, 40, 20);
+        btnPresetUp.setBounds(820, 5, 40, 20);
 
         sldPreset.setMaximum(15000);
         sldPreset.setToolTipText("");
@@ -554,8 +590,9 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(sldPreset);
-        sldPreset.setBounds(10, 40, 560, 40);
+        sldPreset.setBounds(10, 45, 1050, 30);
 
+        btnPresetApply.setBackground(new java.awt.Color(255, 50, 50));
         btnPresetApply.setText("Подать / обновить");
         btnPresetApply.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -563,8 +600,9 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnPresetApply);
-        btnPresetApply.setBounds(10, 80, 170, 20);
+        btnPresetApply.setBounds(10, 80, 170, 50);
 
+        btnTurnOff.setBackground(new java.awt.Color(100, 255, 50));
         btnTurnOff.setText("Снять");
         btnTurnOff.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -572,14 +610,16 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnTurnOff);
-        btnTurnOff.setBounds(470, 80, 100, 20);
+        btnTurnOff.setBounds(940, 80, 110, 50);
 
         btnGroup1A.add(rad1AOn);
+        rad1AOn.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad1AOn.setText("Вкл.");
         getContentPane().add(rad1AOn);
-        rad1AOn.setBounds(60, 110, 70, 20);
+        rad1AOn.setBounds(110, 140, 100, 30);
 
         btnGroup1A.add(rad1AOff);
+        rad1AOff.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad1AOff.setSelected(true);
         rad1AOff.setText("Выкл.");
         rad1AOff.addActionListener(new java.awt.event.ActionListener() {
@@ -588,19 +628,22 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad1AOff);
-        rad1AOff.setBounds(60, 130, 70, 20);
+        rad1AOff.setBounds(110, 170, 100, 30);
 
         btnGroup1A.add(rad1AStay);
+        rad1AStay.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad1AStay.setText("Ост.");
         getContentPane().add(rad1AStay);
-        rad1AStay.setBounds(60, 150, 70, 20);
+        rad1AStay.setBounds(110, 200, 100, 30);
 
         btnGroup2A.add(rad2AOn);
+        rad2AOn.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad2AOn.setText("Вкл.");
         getContentPane().add(rad2AOn);
-        rad2AOn.setBounds(190, 110, 70, 20);
+        rad2AOn.setBounds(350, 140, 100, 30);
 
         btnGroup2A.add(rad2AOff);
+        rad2AOff.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad2AOff.setSelected(true);
         rad2AOff.setText("Выкл.");
         rad2AOff.addActionListener(new java.awt.event.ActionListener() {
@@ -609,19 +652,22 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad2AOff);
-        rad2AOff.setBounds(190, 130, 70, 20);
+        rad2AOff.setBounds(350, 170, 100, 30);
 
         btnGroup2A.add(rad2AStay);
+        rad2AStay.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad2AStay.setText("Ост.");
         getContentPane().add(rad2AStay);
-        rad2AStay.setBounds(190, 150, 70, 20);
+        rad2AStay.setBounds(350, 200, 100, 30);
 
         btnGroup3A.add(rad3AOn);
+        rad3AOn.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad3AOn.setText("Вкл.");
         getContentPane().add(rad3AOn);
-        rad3AOn.setBounds(320, 110, 70, 20);
+        rad3AOn.setBounds(590, 140, 100, 30);
 
         btnGroup3A.add(rad3AOff);
+        rad3AOff.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad3AOff.setSelected(true);
         rad3AOff.setText("Выкл.");
         rad3AOff.addActionListener(new java.awt.event.ActionListener() {
@@ -630,19 +676,22 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad3AOff);
-        rad3AOff.setBounds(320, 130, 70, 20);
+        rad3AOff.setBounds(590, 170, 100, 30);
 
         btnGroup3A.add(rad3AStay);
+        rad3AStay.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad3AStay.setText("Ост.");
         getContentPane().add(rad3AStay);
-        rad3AStay.setBounds(320, 150, 70, 20);
+        rad3AStay.setBounds(590, 200, 100, 30);
 
         btnGroup4A.add(rad4AOn);
+        rad4AOn.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad4AOn.setText("Вкл.");
         getContentPane().add(rad4AOn);
-        rad4AOn.setBounds(450, 110, 70, 20);
+        rad4AOn.setBounds(830, 140, 100, 30);
 
         btnGroup4A.add(rad4AOff);
+        rad4AOff.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad4AOff.setSelected(true);
         rad4AOff.setText("Выкл.");
         rad4AOff.addActionListener(new java.awt.event.ActionListener() {
@@ -651,83 +700,88 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad4AOff);
-        rad4AOff.setBounds(450, 130, 70, 20);
+        rad4AOff.setBounds(830, 170, 100, 30);
 
         btnGroup4A.add(rad4AStay);
+        rad4AStay.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad4AStay.setText("Ост.");
         getContentPane().add(rad4AStay);
-        rad4AStay.setBounds(450, 150, 70, 20);
+        rad4AStay.setBounds(830, 200, 100, 30);
 
+        lblVoltageATitle.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblVoltageATitle.setText("U, В");
         getContentPane().add(lblVoltageATitle);
-        lblVoltageATitle.setBounds(10, 170, 50, 50);
+        lblVoltageATitle.setBounds(10, 230, 100, 70);
 
-        lblU1A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblU1A.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblU1A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU1A.setText("1000");
         lblU1A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU1A);
-        lblU1A.setBounds(60, 170, 120, 50);
+        lblU1A.setBounds(110, 230, 230, 70);
 
-        lblU2A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblU2A.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblU2A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU2A.setText("1000");
         lblU2A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU2A);
-        lblU2A.setBounds(190, 170, 120, 50);
+        lblU2A.setBounds(350, 230, 230, 70);
 
-        lblU3A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblU3A.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblU3A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU3A.setText("1000");
         lblU3A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU3A);
-        lblU3A.setBounds(320, 170, 120, 50);
+        lblU3A.setBounds(590, 230, 230, 70);
 
-        lblU4A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblU4A.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblU4A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU4A.setText("1000");
         lblU4A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU4A);
-        lblU4A.setBounds(450, 170, 120, 50);
+        lblU4A.setBounds(830, 230, 230, 70);
 
+        lblCurrentATitle.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblCurrentATitle.setText("I, мкА");
         getContentPane().add(lblCurrentATitle);
-        lblCurrentATitle.setBounds(10, 220, 50, 50);
+        lblCurrentATitle.setBounds(10, 300, 100, 70);
 
-        lblI1A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblI1A.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblI1A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI1A.setText("1000");
         lblI1A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI1A);
-        lblI1A.setBounds(60, 220, 120, 50);
+        lblI1A.setBounds(110, 300, 230, 70);
 
-        lblI2A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblI2A.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblI2A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI2A.setText("1000");
         lblI2A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI2A);
-        lblI2A.setBounds(190, 220, 120, 50);
+        lblI2A.setBounds(350, 300, 230, 70);
 
-        lblI3A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblI3A.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblI3A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI3A.setText("1000");
         lblI3A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI3A);
-        lblI3A.setBounds(320, 220, 120, 50);
+        lblI3A.setBounds(590, 300, 230, 70);
 
-        lblI4A.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblI4A.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblI4A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI4A.setText("1000");
         lblI4A.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI4A);
-        lblI4A.setBounds(450, 220, 120, 50);
+        lblI4A.setBounds(830, 300, 230, 70);
 
         btnGroup1T.add(rad1TOn);
+        rad1TOn.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad1TOn.setText("Вкл.");
         getContentPane().add(rad1TOn);
-        rad1TOn.setBounds(60, 280, 70, 20);
+        rad1TOn.setBounds(110, 380, 100, 30);
 
         btnGroup1T.add(rad1TOff);
+        rad1TOff.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad1TOff.setSelected(true);
         rad1TOff.setText("Выкл.");
         rad1TOff.addActionListener(new java.awt.event.ActionListener() {
@@ -736,19 +790,22 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad1TOff);
-        rad1TOff.setBounds(60, 300, 70, 20);
+        rad1TOff.setBounds(110, 410, 100, 30);
 
         btnGroup1T.add(rad1TStay);
+        rad1TStay.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad1TStay.setText("Ост.");
         getContentPane().add(rad1TStay);
-        rad1TStay.setBounds(60, 320, 70, 20);
+        rad1TStay.setBounds(110, 440, 100, 30);
 
         btnGroup2T.add(rad2TOn);
+        rad2TOn.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad2TOn.setText("Вкл.");
         getContentPane().add(rad2TOn);
-        rad2TOn.setBounds(190, 280, 70, 20);
+        rad2TOn.setBounds(350, 380, 100, 30);
 
         btnGroup2T.add(rad2TOff);
+        rad2TOff.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad2TOff.setSelected(true);
         rad2TOff.setText("Выкл.");
         rad2TOff.addActionListener(new java.awt.event.ActionListener() {
@@ -757,19 +814,22 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad2TOff);
-        rad2TOff.setBounds(190, 300, 70, 20);
+        rad2TOff.setBounds(350, 410, 100, 30);
 
         btnGroup2T.add(rad2TStay);
+        rad2TStay.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad2TStay.setText("Ост.");
         getContentPane().add(rad2TStay);
-        rad2TStay.setBounds(190, 320, 70, 20);
+        rad2TStay.setBounds(350, 440, 100, 30);
 
         btnGroup3T.add(rad3TOn);
+        rad3TOn.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad3TOn.setText("Вкл.");
         getContentPane().add(rad3TOn);
-        rad3TOn.setBounds(320, 280, 70, 20);
+        rad3TOn.setBounds(590, 380, 100, 30);
 
         btnGroup3T.add(rad3TOff);
+        rad3TOff.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad3TOff.setSelected(true);
         rad3TOff.setText("Выкл.");
         rad3TOff.addActionListener(new java.awt.event.ActionListener() {
@@ -778,19 +838,22 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad3TOff);
-        rad3TOff.setBounds(320, 300, 70, 20);
+        rad3TOff.setBounds(590, 410, 100, 30);
 
         btnGroup3T.add(rad3TStay);
+        rad3TStay.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad3TStay.setText("Ост.");
         getContentPane().add(rad3TStay);
-        rad3TStay.setBounds(320, 320, 70, 20);
+        rad3TStay.setBounds(590, 440, 100, 30);
 
         btnGroup4T.add(rad4TOn);
+        rad4TOn.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad4TOn.setText("Вкл.");
         getContentPane().add(rad4TOn);
-        rad4TOn.setBounds(450, 280, 70, 20);
+        rad4TOn.setBounds(830, 380, 100, 30);
 
         btnGroup4T.add(rad4TOff);
+        rad4TOff.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad4TOff.setSelected(true);
         rad4TOff.setText("Выкл.");
         rad4TOff.addActionListener(new java.awt.event.ActionListener() {
@@ -799,76 +862,79 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(rad4TOff);
-        rad4TOff.setBounds(450, 300, 70, 20);
+        rad4TOff.setBounds(830, 410, 100, 30);
 
         btnGroup4T.add(rad4TStay);
+        rad4TStay.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         rad4TStay.setText("Ост.");
         getContentPane().add(rad4TStay);
-        rad4TStay.setBounds(450, 320, 70, 20);
+        rad4TStay.setBounds(830, 440, 100, 30);
 
+        lblVoltageTTitle.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblVoltageTTitle.setText("U, В");
         getContentPane().add(lblVoltageTTitle);
-        lblVoltageTTitle.setBounds(10, 340, 50, 50);
+        lblVoltageTTitle.setBounds(10, 470, 100, 70);
 
-        lblU1T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblU1T.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblU1T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU1T.setText("1000");
         lblU1T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU1T);
-        lblU1T.setBounds(60, 340, 120, 50);
+        lblU1T.setBounds(110, 470, 230, 70);
 
-        lblU2T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblU2T.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblU2T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU2T.setText("1000");
         lblU2T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU2T);
-        lblU2T.setBounds(190, 340, 120, 50);
+        lblU2T.setBounds(350, 470, 230, 70);
 
-        lblU3T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblU3T.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblU3T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU3T.setText("1000");
         lblU3T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU3T);
-        lblU3T.setBounds(320, 340, 120, 50);
+        lblU3T.setBounds(590, 470, 230, 70);
 
-        lblU4T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblU4T.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblU4T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblU4T.setText("1000");
         lblU4T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblU4T);
-        lblU4T.setBounds(450, 340, 120, 50);
+        lblU4T.setBounds(830, 470, 230, 70);
 
+        lblCurrentTTitle.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         lblCurrentTTitle.setText("I, мкА");
         getContentPane().add(lblCurrentTTitle);
-        lblCurrentTTitle.setBounds(10, 390, 50, 50);
+        lblCurrentTTitle.setBounds(10, 540, 100, 70);
 
-        lblI1T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblI1T.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblI1T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI1T.setText("1000");
         lblI1T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI1T);
-        lblI1T.setBounds(60, 390, 120, 50);
+        lblI1T.setBounds(110, 540, 230, 70);
 
-        lblI2T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblI2T.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblI2T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI2T.setText("1000");
         lblI2T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI2T);
-        lblI2T.setBounds(190, 390, 120, 50);
+        lblI2T.setBounds(350, 540, 230, 70);
 
-        lblI3T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblI3T.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblI3T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI3T.setText("1000");
         lblI3T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI3T);
-        lblI3T.setBounds(320, 390, 120, 50);
+        lblI3T.setBounds(590, 540, 230, 70);
 
-        lblI4T.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lblI4T.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         lblI4T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblI4T.setText("1000");
         lblI4T.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(lblI4T);
-        lblI4T.setBounds(450, 390, 120, 50);
+        lblI4T.setBounds(830, 540, 230, 70);
 
         tglBtnLockScreen.setText("Заблокировать экран");
         tglBtnLockScreen.addActionListener(new java.awt.event.ActionListener() {
@@ -877,10 +943,11 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(tglBtnLockScreen);
-        tglBtnLockScreen.setBounds(10, 450, 200, 40);
+        tglBtnLockScreen.setBounds(10, 620, 200, 50);
 
+        lblEmergencyOff.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         lblEmergencyOff.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblEmergencyOff.setText("<html>АВАРИЙНОЕ ВЫКЛЮЧЕНИЕ<br>ТРОЙНОЙ КЛИК СЮДА!</html>");
+        lblEmergencyOff.setText("АВАРИЙНОЕ ВЫКЛЮЧЕНИЕ. ТРОЙНОЙ КЛИК СЮДА!");
         lblEmergencyOff.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         lblEmergencyOff.setOpaque(true);
         lblEmergencyOff.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -889,7 +956,7 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(lblEmergencyOff);
-        lblEmergencyOff.setBounds(220, 450, 200, 40);
+        lblEmergencyOff.setBounds(220, 620, 690, 50);
 
         btnExit.setText("Выход");
         btnExit.addActionListener(new java.awt.event.ActionListener() {
@@ -898,81 +965,29 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnExit);
-        btnExit.setBounds(430, 450, 140, 40);
+        btnExit.setBounds(920, 620, 140, 50);
 
-        btn1A.setText("1A");
-        btn1A.addActionListener(new java.awt.event.ActionListener() {
+        btnPreset500.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        btnPreset500.setText("500");
+        btnPreset500.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn1AActionPerformed(evt);
+                btnPreset500ActionPerformed(evt);
             }
         });
-        getContentPane().add(btn1A);
-        btn1A.setBounds(130, 115, 50, 50);
+        getContentPane().add(btnPreset500);
+        btnPreset500.setBounds(190, 80, 90, 50);
 
-        btn2A.setText("2A");
-        btn2A.addActionListener(new java.awt.event.ActionListener() {
+        btnPreset600.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        btnPreset600.setText("600");
+        btnPreset600.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn2AActionPerformed(evt);
+                btnPreset600ActionPerformed(evt);
             }
         });
-        getContentPane().add(btn2A);
-        btn2A.setBounds(260, 115, 50, 50);
+        getContentPane().add(btnPreset600);
+        btnPreset600.setBounds(290, 80, 90, 50);
 
-        btn3A.setText("3A");
-        btn3A.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn3AActionPerformed(evt);
-            }
-        });
-        getContentPane().add(btn3A);
-        btn3A.setBounds(390, 115, 50, 50);
-
-        btn4A.setText("4A");
-        btn4A.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn4AActionPerformed(evt);
-            }
-        });
-        getContentPane().add(btn4A);
-        btn4A.setBounds(520, 115, 50, 50);
-
-        btn4T.setText("4Ш");
-        btn4T.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn4TActionPerformed(evt);
-            }
-        });
-        getContentPane().add(btn4T);
-        btn4T.setBounds(520, 285, 50, 50);
-
-        btn1T.setText("1Ш");
-        btn1T.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn1TActionPerformed(evt);
-            }
-        });
-        getContentPane().add(btn1T);
-        btn1T.setBounds(130, 285, 50, 50);
-
-        btn2T.setText("2Ш");
-        btn2T.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn2TActionPerformed(evt);
-            }
-        });
-        getContentPane().add(btn2T);
-        btn2T.setBounds(260, 285, 50, 50);
-
-        btn3T.setText("3Ш");
-        btn3T.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn3TActionPerformed(evt);
-            }
-        });
-        getContentPane().add(btn3T);
-        btn3T.setBounds(390, 285, 50, 50);
-
-        btnPreset1000.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        btnPreset1000.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         btnPreset1000.setText("1000");
         btnPreset1000.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -980,9 +995,9 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnPreset1000);
-        btnPreset1000.setBounds(190, 80, 62, 20);
+        btnPreset1000.setBounds(410, 80, 90, 50);
 
-        btnPreset1100.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        btnPreset1100.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         btnPreset1100.setText("1100");
         btnPreset1100.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -990,9 +1005,113 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnPreset1100);
-        btnPreset1100.setBounds(260, 80, 62, 20);
+        btnPreset1100.setBounds(510, 80, 90, 50);
 
-        btnPreset1200.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        lbl1T.setFont(new java.awt.Font("Dialog", 0, 48)); // NOI18N
+        lbl1T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl1T.setText("1Ш");
+        lbl1T.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(220, 220, 220), 1, true));
+        lbl1T.setOpaque(true);
+        lbl1T.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl1TMouseClicked(evt);
+            }
+        });
+        getContentPane().add(lbl1T);
+        lbl1T.setBounds(220, 380, 120, 80);
+
+        lbl2T.setFont(new java.awt.Font("Dialog", 0, 48)); // NOI18N
+        lbl2T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl2T.setText("2Ш");
+        lbl2T.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(220, 220, 220), 1, true));
+        lbl2T.setOpaque(true);
+        lbl2T.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl2TMouseClicked(evt);
+            }
+        });
+        getContentPane().add(lbl2T);
+        lbl2T.setBounds(450, 380, 120, 80);
+
+        lbl3T.setFont(new java.awt.Font("Dialog", 0, 48)); // NOI18N
+        lbl3T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl3T.setText("3Ш");
+        lbl3T.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(220, 220, 220), 1, true));
+        lbl3T.setOpaque(true);
+        lbl3T.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl3TMouseClicked(evt);
+            }
+        });
+        getContentPane().add(lbl3T);
+        lbl3T.setBounds(700, 380, 120, 80);
+
+        lbl4T.setFont(new java.awt.Font("Dialog", 0, 48)); // NOI18N
+        lbl4T.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl4T.setText("4Ш");
+        lbl4T.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(220, 220, 220), 1, true));
+        lbl4T.setOpaque(true);
+        lbl4T.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl4TMouseClicked(evt);
+            }
+        });
+        getContentPane().add(lbl4T);
+        lbl4T.setBounds(940, 380, 120, 80);
+
+        lbl1A.setFont(new java.awt.Font("Dialog", 0, 48)); // NOI18N
+        lbl1A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl1A.setText("1А");
+        lbl1A.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(220, 220, 220), 1, true));
+        lbl1A.setOpaque(true);
+        lbl1A.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl1AMouseClicked(evt);
+            }
+        });
+        getContentPane().add(lbl1A);
+        lbl1A.setBounds(220, 140, 120, 80);
+
+        lbl3A.setFont(new java.awt.Font("Dialog", 0, 48)); // NOI18N
+        lbl3A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl3A.setText("3А");
+        lbl3A.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(220, 220, 220), 1, true));
+        lbl3A.setOpaque(true);
+        lbl3A.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl3AMouseClicked(evt);
+            }
+        });
+        getContentPane().add(lbl3A);
+        lbl3A.setBounds(700, 140, 120, 80);
+
+        lbl4A.setFont(new java.awt.Font("Dialog", 0, 48)); // NOI18N
+        lbl4A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl4A.setText("4А");
+        lbl4A.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(220, 220, 220), 1, true));
+        lbl4A.setOpaque(true);
+        lbl4A.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl4AMouseClicked(evt);
+            }
+        });
+        getContentPane().add(lbl4A);
+        lbl4A.setBounds(940, 140, 120, 80);
+
+        lbl2A.setFont(new java.awt.Font("Dialog", 0, 48)); // NOI18N
+        lbl2A.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl2A.setText("2А");
+        lbl2A.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(220, 220, 220), 1, true));
+        lbl2A.setOpaque(true);
+        lbl2A.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl2AMouseClicked(evt);
+            }
+        });
+        getContentPane().add(lbl2A);
+        lbl2A.setBounds(460, 140, 120, 80);
+
+        btnPreset1200.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         btnPreset1200.setText("1200");
         btnPreset1200.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1000,17 +1119,27 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnPreset1200);
-        btnPreset1200.setBounds(330, 80, 62, 20);
+        btnPreset1200.setBounds(610, 80, 90, 50);
 
-        btnPreset1500.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
-        btnPreset1500.setText("1500");
-        btnPreset1500.addActionListener(new java.awt.event.ActionListener() {
+        btnPreset2500.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        btnPreset2500.setText("2500");
+        btnPreset2500.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPreset1500ActionPerformed(evt);
+                btnPreset2500ActionPerformed(evt);
             }
         });
-        getContentPane().add(btnPreset1500);
-        btnPreset1500.setBounds(400, 80, 62, 20);
+        getContentPane().add(btnPreset2500);
+        btnPreset2500.setBounds(730, 80, 90, 50);
+
+        btnPreset3500.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        btnPreset3500.setText("3500");
+        btnPreset3500.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPreset3500ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnPreset3500);
+        btnPreset3500.setBounds(830, 80, 90, 50);
 
         pack();
         setLocationRelativeTo(null);
@@ -1354,38 +1483,6 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         }
     }
     
-    private void btn1AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn1AActionPerformed
-        Reconnect( "1A");
-    }//GEN-LAST:event_btn1AActionPerformed
-
-    private void btn2AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn2AActionPerformed
-        Reconnect( "2A");
-    }//GEN-LAST:event_btn2AActionPerformed
-
-    private void btn3AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn3AActionPerformed
-        Reconnect( "3A");
-    }//GEN-LAST:event_btn3AActionPerformed
-
-    private void btn4AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn4AActionPerformed
-        Reconnect( "4A");
-    }//GEN-LAST:event_btn4AActionPerformed
-
-    private void btn1TActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn1TActionPerformed
-        Reconnect( "1T");
-    }//GEN-LAST:event_btn1TActionPerformed
-
-    private void btn2TActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn2TActionPerformed
-        Reconnect( "2T");
-    }//GEN-LAST:event_btn2TActionPerformed
-
-    private void btn3TActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn3TActionPerformed
-        Reconnect( "3T");
-    }//GEN-LAST:event_btn3TActionPerformed
-
-    private void btn4TActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn4TActionPerformed
-        Reconnect( "4T");
-    }//GEN-LAST:event_btn4TActionPerformed
-
     private void formMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_formMouseWheelMoved
         int value = sldPreset.getValue();
         value -= evt.getWheelRotation() * 100;
@@ -1395,28 +1492,6 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         edtPreset.setText( "" + value);
         tApplyPreset.restart();
     }//GEN-LAST:event_formMouseWheelMoved
-
-    private void btnPreset1500ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreset1500ActionPerformed
-        int value = 1500;
-        try {
-            sldPreset.setValue( value);
-            edtPreset.setText( "" + value);
-            tApplyPreset.restart();
-        } catch (NumberFormatException nfe) {
-            logger.warn( nfe);
-        }
-    }//GEN-LAST:event_btnPreset1500ActionPerformed
-
-    private void btnPreset1000ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreset1000ActionPerformed
-        int value = 1000;
-        try {
-            sldPreset.setValue( value);
-            edtPreset.setText( "" + value);
-            tApplyPreset.restart();
-        } catch (NumberFormatException nfe) {
-            logger.warn( nfe);
-        }
-    }//GEN-LAST:event_btnPreset1000ActionPerformed
 
     private void btnPreset1100ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreset1100ActionPerformed
         int value = 1100;
@@ -1429,6 +1504,367 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnPreset1100ActionPerformed
 
+    private void btnPreset500ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreset500ActionPerformed
+        int value = 500;
+        try {
+            sldPreset.setValue( value);
+            edtPreset.setText( "" + value);
+            tApplyPreset.restart();
+        } catch (NumberFormatException nfe) {
+            logger.warn( nfe);
+        }
+    }//GEN-LAST:event_btnPreset500ActionPerformed
+
+    private void btnPreset600ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreset600ActionPerformed
+        int value = 600;
+        try {
+            sldPreset.setValue( value);
+            edtPreset.setText( "" + value);
+            tApplyPreset.restart();
+        } catch (NumberFormatException nfe) {
+            logger.warn( nfe);
+        }
+    }//GEN-LAST:event_btnPreset600ActionPerformed
+
+    private void btnPreset1000ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreset1000ActionPerformed
+        int value = 1000;
+        try {
+            sldPreset.setValue( value);
+            edtPreset.setText( "" + value);
+            tApplyPreset.restart();
+        } catch (NumberFormatException nfe) {
+            logger.warn( nfe);
+        }
+    }//GEN-LAST:event_btnPreset1000ActionPerformed
+
+    private void lbl1TMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl1TMouseClicked
+        JLabel lbl = lbl1T;
+        m_strReconnectElectrode = "1T";
+        m_nReconnectClicks++;
+        tReconnectClicksDrop.restart();
+        if( m_nReconnectClicks == 3) {
+            lbl.setBackground( new Color( 100, 250, 80));
+            Reconnect( "1T");
+            tReconnectClicksDrop.stop();
+        }
+
+        switch( m_nReconnectClicks) {
+            case 1: lbl.setBackground( new Color( 180,  80, 80)); break;
+            case 2: lbl.setBackground( new Color( 180, 180, 80)); break;
+            case 3:
+                
+                new Timer( 5000, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Timer t = ( Timer) e.getSource();
+                        t.stop();
+                        if( m_strReconnectElectrode != null) {
+                            switch( m_strReconnectElectrode) {
+                                case "1A": lbl1A.setBackground( null); break;
+                                case "1T": lbl1T.setBackground( null); break;
+                                case "2A": lbl2A.setBackground( null); break;
+                                case "2T": lbl2T.setBackground( null); break;
+                                case "3A": lbl3A.setBackground( null); break;
+                                case "3T": lbl3T.setBackground( null); break;
+                                case "4A": lbl4A.setBackground( null); break;
+                                case "4T": lbl4T.setBackground( null); break;
+                            }
+                        }
+                    }
+                }).start();
+                m_nReconnectClicks = 0;
+                break;
+            default: lbl.setBackground( null); break;
+        }
+    }//GEN-LAST:event_lbl1TMouseClicked
+
+    private void lbl2TMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl2TMouseClicked
+        JLabel lbl = lbl2T;
+        m_strReconnectElectrode = "2T";
+        m_nReconnectClicks++;
+        tReconnectClicksDrop.restart();
+        if( m_nReconnectClicks == 3) {
+            lbl.setBackground( new Color( 100, 250, 80));
+            Reconnect( "2T");
+            tReconnectClicksDrop.stop();
+        }
+
+        switch( m_nReconnectClicks) {
+            case 1: lbl.setBackground( new Color( 180,  80, 80)); break;
+            case 2: lbl.setBackground( new Color( 180, 180, 80)); break;
+            case 3:
+                
+                new Timer( 5000, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Timer t = ( Timer) e.getSource();
+                        t.stop();
+                        if( m_strReconnectElectrode != null) {
+                            switch( m_strReconnectElectrode) {
+                                case "1A": lbl1A.setBackground( null); break;
+                                case "1T": lbl1T.setBackground( null); break;
+                                case "2A": lbl2A.setBackground( null); break;
+                                case "2T": lbl2T.setBackground( null); break;
+                                case "3A": lbl3A.setBackground( null); break;
+                                case "3T": lbl3T.setBackground( null); break;
+                                case "4A": lbl4A.setBackground( null); break;
+                                case "4T": lbl4T.setBackground( null); break;
+                            }
+                        }
+                    }
+                }).start();
+                m_nReconnectClicks = 0;
+                break;
+            default: lbl.setBackground( null); break;
+        }
+    }//GEN-LAST:event_lbl2TMouseClicked
+
+    private void lbl3TMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl3TMouseClicked
+        JLabel lbl = lbl3T;
+        m_strReconnectElectrode = "3T";
+        m_nReconnectClicks++;
+        tReconnectClicksDrop.restart();
+        if( m_nReconnectClicks == 3) {
+            lbl.setBackground( new Color( 100, 250, 80));
+            Reconnect( "3T");
+            tReconnectClicksDrop.stop();
+        }
+
+        switch( m_nReconnectClicks) {
+            case 1: lbl.setBackground( new Color( 180,  80, 80)); break;
+            case 2: lbl.setBackground( new Color( 180, 180, 80)); break;
+            case 3:
+                
+                new Timer( 5000, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Timer t = ( Timer) e.getSource();
+                        t.stop();
+                        if( m_strReconnectElectrode != null) {
+                            switch( m_strReconnectElectrode) {
+                                case "1A": lbl1A.setBackground( null); break;
+                                case "1T": lbl1T.setBackground( null); break;
+                                case "2A": lbl2A.setBackground( null); break;
+                                case "2T": lbl2T.setBackground( null); break;
+                                case "3A": lbl3A.setBackground( null); break;
+                                case "3T": lbl3T.setBackground( null); break;
+                                case "4A": lbl4A.setBackground( null); break;
+                                case "4T": lbl4T.setBackground( null); break;
+                            }
+                        }
+                    }
+                }).start();
+                m_nReconnectClicks = 0;
+                break;
+            default: lbl.setBackground( null); break;
+        }
+    }//GEN-LAST:event_lbl3TMouseClicked
+
+    private void lbl4TMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl4TMouseClicked
+        JLabel lbl = lbl4T;
+        m_strReconnectElectrode = "4T";
+        m_nReconnectClicks++;
+        tReconnectClicksDrop.restart();
+        if( m_nReconnectClicks == 3) {
+            lbl.setBackground( new Color( 100, 250, 80));
+            Reconnect( "4T");
+            tReconnectClicksDrop.stop();
+        }
+
+        switch( m_nReconnectClicks) {
+            case 1: lbl.setBackground( new Color( 180,  80, 80)); break;
+            case 2: lbl.setBackground( new Color( 180, 180, 80)); break;
+            case 3:
+                
+                new Timer( 5000, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Timer t = ( Timer) e.getSource();
+                        t.stop();
+                        if( m_strReconnectElectrode != null) {
+                            switch( m_strReconnectElectrode) {
+                                case "1A": lbl1A.setBackground( null); break;
+                                case "1T": lbl1T.setBackground( null); break;
+                                case "2A": lbl2A.setBackground( null); break;
+                                case "2T": lbl2T.setBackground( null); break;
+                                case "3A": lbl3A.setBackground( null); break;
+                                case "3T": lbl3T.setBackground( null); break;
+                                case "4A": lbl4A.setBackground( null); break;
+                                case "4T": lbl4T.setBackground( null); break;
+                            }
+                        }
+                    }
+                }).start();
+                m_nReconnectClicks = 0;
+                break;
+            default: lbl.setBackground( null); break;
+        }
+    }//GEN-LAST:event_lbl4TMouseClicked
+
+    private void lbl1AMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl1AMouseClicked
+        JLabel lbl = lbl1A;
+        m_strReconnectElectrode = "1A";
+        m_nReconnectClicks++;
+        tReconnectClicksDrop.restart();
+        if( m_nReconnectClicks == 3) {
+            lbl.setBackground( new Color( 100, 250, 80));
+            Reconnect( "1A");
+            tReconnectClicksDrop.stop();
+        }
+
+        switch( m_nReconnectClicks) {
+            case 1: lbl.setBackground( new Color( 180,  80, 80)); break;
+            case 2: lbl.setBackground( new Color( 180, 180, 80)); break;
+            case 3:
+                
+                new Timer( 5000, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Timer t = ( Timer) e.getSource();
+                        t.stop();
+                        if( m_strReconnectElectrode != null) {
+                            switch( m_strReconnectElectrode) {
+                                case "1A": lbl1A.setBackground( null); break;
+                                case "1T": lbl1T.setBackground( null); break;
+                                case "2A": lbl2A.setBackground( null); break;
+                                case "2T": lbl2T.setBackground( null); break;
+                                case "3A": lbl3A.setBackground( null); break;
+                                case "3T": lbl3T.setBackground( null); break;
+                                case "4A": lbl4A.setBackground( null); break;
+                                case "4T": lbl4T.setBackground( null); break;
+                            }
+                        }
+                    }
+                }).start();
+                m_nReconnectClicks = 0;
+                break;
+            default: lbl.setBackground( null); break;
+        }
+    }//GEN-LAST:event_lbl1AMouseClicked
+
+    private void lbl3AMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl3AMouseClicked
+        JLabel lbl = lbl3A;
+        m_strReconnectElectrode = "3A";
+        m_nReconnectClicks++;
+        tReconnectClicksDrop.restart();
+        if( m_nReconnectClicks == 3) {
+            lbl.setBackground( new Color( 100, 250, 80));
+            Reconnect( "3A");
+            tReconnectClicksDrop.stop();
+        }
+
+        switch( m_nReconnectClicks) {
+            case 1: lbl.setBackground( new Color( 180,  80, 80)); break;
+            case 2: lbl.setBackground( new Color( 180, 180, 80)); break;
+            case 3:
+                
+                new Timer( 5000, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Timer t = ( Timer) e.getSource();
+                        t.stop();
+                        if( m_strReconnectElectrode != null) {
+                            switch( m_strReconnectElectrode) {
+                                case "1A": lbl1A.setBackground( null); break;
+                                case "1T": lbl1T.setBackground( null); break;
+                                case "2A": lbl2A.setBackground( null); break;
+                                case "2T": lbl2T.setBackground( null); break;
+                                case "3A": lbl3A.setBackground( null); break;
+                                case "3T": lbl3T.setBackground( null); break;
+                                case "4A": lbl4A.setBackground( null); break;
+                                case "4T": lbl4T.setBackground( null); break;
+                            }
+                        }
+                    }
+                }).start();
+                m_nReconnectClicks = 0;
+                break;
+            default: lbl.setBackground( null); break;
+        }
+    }//GEN-LAST:event_lbl3AMouseClicked
+
+    private void lbl4AMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl4AMouseClicked
+        JLabel lbl = lbl4A;
+        m_strReconnectElectrode = "4A";
+        m_nReconnectClicks++;
+        tReconnectClicksDrop.restart();
+        if( m_nReconnectClicks == 3) {
+            lbl.setBackground( new Color( 100, 250, 80));
+            Reconnect( "4A");
+            tReconnectClicksDrop.stop();
+        }
+
+        switch( m_nReconnectClicks) {
+            case 1: lbl.setBackground( new Color( 180,  80, 80)); break;
+            case 2: lbl.setBackground( new Color( 180, 180, 80)); break;
+            case 3:
+                
+                new Timer( 5000, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Timer t = ( Timer) e.getSource();
+                        t.stop();
+                        if( m_strReconnectElectrode != null) {
+                            switch( m_strReconnectElectrode) {
+                                case "1A": lbl1A.setBackground( null); break;
+                                case "1T": lbl1T.setBackground( null); break;
+                                case "2A": lbl2A.setBackground( null); break;
+                                case "2T": lbl2T.setBackground( null); break;
+                                case "3A": lbl3A.setBackground( null); break;
+                                case "3T": lbl3T.setBackground( null); break;
+                                case "4A": lbl4A.setBackground( null); break;
+                                case "4T": lbl4T.setBackground( null); break;
+                            }
+                        }
+                    }
+                }).start();
+                m_nReconnectClicks = 0;
+                break;
+            default: lbl.setBackground( null); break;
+        }
+    }//GEN-LAST:event_lbl4AMouseClicked
+
+    private void lbl2AMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl2AMouseClicked
+        JLabel lbl = lbl2A;
+        m_strReconnectElectrode = "2A";
+        m_nReconnectClicks++;
+        tReconnectClicksDrop.restart();
+        if( m_nReconnectClicks == 3) {
+            lbl.setBackground( new Color( 100, 250, 80));
+            Reconnect( "2A");
+            tReconnectClicksDrop.stop();
+        }
+
+        switch( m_nReconnectClicks) {
+            case 1: lbl.setBackground( new Color( 180,  80, 80)); break;
+            case 2: lbl.setBackground( new Color( 180, 180, 80)); break;
+            case 3:
+                
+                new Timer( 5000, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Timer t = ( Timer) e.getSource();
+                        t.stop();
+                        if( m_strReconnectElectrode != null) {
+                            switch( m_strReconnectElectrode) {
+                                case "1A": lbl1A.setBackground( null); break;
+                                case "1T": lbl1T.setBackground( null); break;
+                                case "2A": lbl2A.setBackground( null); break;
+                                case "2T": lbl2T.setBackground( null); break;
+                                case "3A": lbl3A.setBackground( null); break;
+                                case "3T": lbl3T.setBackground( null); break;
+                                case "4A": lbl4A.setBackground( null); break;
+                                case "4T": lbl4T.setBackground( null); break;
+                            }
+                        }
+                    }
+                }).start();
+                m_nReconnectClicks = 0;
+                break;
+            default: lbl.setBackground( null); break;
+        }
+    }//GEN-LAST:event_lbl2AMouseClicked
+
     private void btnPreset1200ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreset1200ActionPerformed
         int value = 1200;
         try {
@@ -1439,6 +1875,28 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
             logger.warn( nfe);
         }
     }//GEN-LAST:event_btnPreset1200ActionPerformed
+
+    private void btnPreset2500ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreset2500ActionPerformed
+        int value = 2500;
+        try {
+            sldPreset.setValue( value);
+            edtPreset.setText( "" + value);
+            tApplyPreset.restart();
+        } catch (NumberFormatException nfe) {
+            logger.warn( nfe);
+        }
+    }//GEN-LAST:event_btnPreset2500ActionPerformed
+
+    private void btnPreset3500ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreset3500ActionPerformed
+        int value = 3500;
+        try {
+            sldPreset.setValue( value);
+            edtPreset.setText( "" + value);
+            tApplyPreset.restart();
+        } catch (NumberFormatException nfe) {
+            logger.warn( nfe);
+        }
+    }//GEN-LAST:event_btnPreset3500ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1477,14 +1935,6 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn1A;
-    private javax.swing.JButton btn1T;
-    private javax.swing.JButton btn2A;
-    private javax.swing.JButton btn2T;
-    private javax.swing.JButton btn3A;
-    private javax.swing.JButton btn3T;
-    private javax.swing.JButton btn4A;
-    private javax.swing.JButton btn4T;
     private javax.swing.JButton btnExit;
     private javax.swing.ButtonGroup btnGroup1A;
     private javax.swing.ButtonGroup btnGroup1T;
@@ -1497,12 +1947,23 @@ public class HVV4_HvMainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnPreset1000;
     private javax.swing.JButton btnPreset1100;
     private javax.swing.JButton btnPreset1200;
-    private javax.swing.JButton btnPreset1500;
+    private javax.swing.JButton btnPreset2500;
+    private javax.swing.JButton btnPreset3500;
+    private javax.swing.JButton btnPreset500;
+    private javax.swing.JButton btnPreset600;
     private javax.swing.JButton btnPresetApply;
     private javax.swing.JButton btnPresetDown;
     private javax.swing.JButton btnPresetUp;
     private javax.swing.JButton btnTurnOff;
     private javax.swing.JTextField edtPreset;
+    private javax.swing.JLabel lbl1A;
+    private javax.swing.JLabel lbl1T;
+    private javax.swing.JLabel lbl2A;
+    private javax.swing.JLabel lbl2T;
+    private javax.swing.JLabel lbl3A;
+    private javax.swing.JLabel lbl3T;
+    private javax.swing.JLabel lbl4A;
+    private javax.swing.JLabel lbl4T;
     private javax.swing.JLabel lblCurrentATitle;
     private javax.swing.JLabel lblCurrentTTitle;
     private javax.swing.JLabel lblEmergencyOff;
